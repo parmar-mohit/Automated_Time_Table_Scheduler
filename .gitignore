@@ -1,0 +1,6 @@
+# IntelliJ files
+.idea/*
+Automated_Time_Table_Scheduler.iml
+
+# Output Files
+out/*
