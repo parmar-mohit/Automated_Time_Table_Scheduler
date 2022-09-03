@@ -17,6 +17,7 @@ public class Constraint {
 
     public static final int LEFT = GridBagConstraints.WEST;
     public static final int RIGHT = GridBagConstraints.EAST;
+    public static final int CENTER = GridBagConstraints.CENTER;
 
     public static GridBagConstraints setPosition(int x, int y) {
         return new GridBagConstraints(x, y, 1, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(5, 5, 5, 5), 5, 5);

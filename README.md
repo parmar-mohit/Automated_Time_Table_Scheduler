@@ -4,6 +4,17 @@
 
 The aim of this project is help schools,colleges, universities in thier process of making time table for respective organisations. Time Table scheduling is an dynamic problem which we intend to solve using genetic algorithm.
 
+### Instruction to Execute Program
+First Run the MySQL Queries mentioned in [MySQL Setup Queries](./Database/MySQl%20Setup%20Queries.md) then run the following commands to execute the program successfully
+```
+To Compile Files(Location : Project Directory)
+cd src
+javac -d ./out/production/Automated_Time_Table_Scheduler AutomatedTimeTableScheduler/Application.java
+
+To Execute Program(Location : Project Directory)
+java -classpath "./out/production/Automated_Time_Table_Scheduler;./Jar Files/MySQl JDBC Connector.jar" AutomatedTimeTableScheduler.Application
+```
+
 ### Directory
 
 [src](./src/) contains Source code for Program.
