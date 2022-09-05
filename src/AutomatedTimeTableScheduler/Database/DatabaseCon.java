@@ -46,4 +46,11 @@ public class DatabaseCon {
         PreparedStatement preparedStatement = db.prepareStatement("SELECT DISTINCT start_time,end_time FROM time_slots;");
         return preparedStatement.executeQuery();
     }
+
+    public int getTimeSlotCount() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(DISTINCT start_time,end_time) FROM time_slots;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
 }
