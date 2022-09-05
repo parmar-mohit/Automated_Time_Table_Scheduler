@@ -28,4 +28,7 @@ public class Constant {
     public static final String THURSDAY = "Thursday";
     public static final String FRIDAY = "Friday";
     public static final String WEEK[] = {MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY};
+
+    //File Location Constant
+    public static final String ADD_ICON = "Images/Add Icon.png";
 }

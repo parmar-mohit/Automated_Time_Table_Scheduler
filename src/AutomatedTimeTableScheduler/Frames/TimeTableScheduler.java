@@ -1,5 +1,6 @@
 package AutomatedTimeTableScheduler.Frames;
 
+import AutomatedTimeTableScheduler.Panels.ClassPanel;
 import AutomatedTimeTableScheduler.Panels.TimeSlotsPanel;
 import AutomatedTimeTableScheduler.Panels.TimeTablePanel;
 import AutomatedTimeTableScheduler.Static.Constant;
@@ -31,6 +32,7 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
 
         //Adding Listeners
         buttonPanel.timeSlotsButton.addActionListener(this);
+        buttonPanel.classButton.addActionListener(this);
         buttonPanel.timeTableButton.addActionListener(this);
 
         //Frame Details
@@ -55,7 +57,9 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
 
         if (e.getSource() == buttonPanel.timeSlotsButton) {
             optionPanel = new TimeSlotsPanel();
-        }else if( e.getSource() == buttonPanel.timeTableButton ){
+        }else if( e.getSource() == buttonPanel.classButton ){
+            optionPanel = new ClassPanel();
+        } else if( e.getSource() == buttonPanel.timeTableButton ){
             optionPanel = new TimeTablePanel();
         }
 
@@ -77,16 +81,19 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
 
 class ButtonPanel extends JPanel{
 
-    public JButton timeSlotsButton,timeTableButton;
+    public JButton timeSlotsButton,classButton,timeTableButton;
 
     public ButtonPanel(){
         //Initialising Variables
         timeSlotsButton = new JButton("Time Slots");
+        classButton = new JButton("Class");
         timeTableButton = new JButton("Time Table");
 
         //Editing Components
         timeSlotsButton.setPreferredSize(Constant.BUTTON_SIZE);
         timeSlotsButton.setBackground(Constant.BUTTON_BACKGROUND);
+        classButton.setPreferredSize(Constant.BUTTON_SIZE);
+        classButton.setBackground(Constant.BUTTON_BACKGROUND);
         timeTableButton.setPreferredSize(Constant.BUTTON_SIZE);
         timeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
 
@@ -96,6 +103,7 @@ class ButtonPanel extends JPanel{
 
         //Adding Member to Panel
         add(timeSlotsButton, Constraint.setPosition(0,0));
-        add(timeTableButton,Constraint.setPosition(0,1));
+        add(classButton,Constraint.setPosition(0,1));
+        add(timeTableButton,Constraint.setPosition(0,2));
     }
 }
