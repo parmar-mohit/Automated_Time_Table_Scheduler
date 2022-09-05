@@ -4,3 +4,6 @@ Automated_Time_Table_Scheduler.iml
 
 # Output Files
 out/*
+
+# Program Generated Files
+Time Table.pdf

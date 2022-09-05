@@ -14,6 +14,8 @@ public class Constant {
     public static final Color SELECTED_BUTTON = new Color(163, 198, 255);
     public static final Color PANEL_BACKGROUND = new Color(66, 135, 245);
     public static final Color TIME_SELECTOR_PANEL_BACKGROUND = new Color(39, 222, 195);
+    public static final Color RED = new Color(255,0,0);
+    public static final Color GREEN = new Color(0,255,0);
 
     //Size Constants
     public static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();

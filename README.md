@@ -9,10 +9,10 @@ First Run the MySQL Queries mentioned in [MySQL Setup Queries](./Database/MySQl%
 ```
 To Compile Files(Location : Project Directory)
 cd src
-javac -d ./out/production/Automated_Time_Table_Scheduler AutomatedTimeTableScheduler/Application.java
+javac -d "../out/production/Automated_Time_Table_Scheduler" -classpath "../Jar Files/ITextPDF.jar;./" AutomatedTimeTableScheduler/Application.java
 
 To Execute Program(Location : Project Directory)
-java -classpath "./out/production/Automated_Time_Table_Scheduler;./Jar Files/MySQl JDBC Connector.jar" AutomatedTimeTableScheduler.Application
+java -classpath "./out/production/Automated_Time_Table_Scheduler;./Jar Files/MySQl JDBC Connector.jar;./Jar Files/ITextPDF.jar" AutomatedTimeTableScheduler.Application
 ```
 
 ### Directory
