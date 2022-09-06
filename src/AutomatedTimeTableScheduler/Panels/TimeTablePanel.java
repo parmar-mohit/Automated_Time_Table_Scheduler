@@ -15,13 +15,14 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
 
     private boolean status;
-    private JLabel timeSlotsLabel,statusLabel;
+    private JLabel timeSlotsLabel,classLabel,statusLabel;
     private JButton generateTimeTableButton;
     private DatabaseCon db;
 
     public  TimeTablePanel(){
         //Initialising Member
         timeSlotsLabel = new JLabel();
+        classLabel = new JLabel();
         statusLabel = new JLabel();
         generateTimeTableButton = new JButton("Generate Time Table");
 
@@ -30,6 +31,7 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
         //Editing Members
         timeSlotsLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
+        classLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         statusLabel.setFont(new Font("Times New Roman",Font.BOLD,24));
         generateTimeTableButton.setPreferredSize(Constant.BUTTON_SIZE);
         generateTimeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
@@ -43,8 +45,9 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
         //Adding Member to Panel
         add(timeSlotsLabel, Constraint.setPosition(0,0));
-        add(statusLabel, Constraint.setPosition(0,1));
-        add(generateTimeTableButton,Constraint.setPosition(0,2));
+        add(classLabel,Constraint.setPosition(0,1));
+        add(statusLabel, Constraint.setPosition(0,2));
+        add(generateTimeTableButton,Constraint.setPosition(0,3));
     }
 
     private void checkStatus(){
@@ -58,6 +61,14 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 timeSlotsLabel.setText("Time Slots : All Ok");
             }else{
                 timeSlotsLabel.setText("Time Slots : There should be minimum 2 Time Slots");
+                status = false;
+            }
+
+            //Checking for Class
+            if( db.getClassCount() >= 2  ){
+                classLabel.setText("Class : All Ok");
+            }else{
+                classLabel.setText("Class : There should be minimum 2 Classes");
                 status = false;
             }
         }catch(Exception e){

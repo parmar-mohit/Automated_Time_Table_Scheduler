@@ -53,4 +53,38 @@ public class DatabaseCon {
         resultSet.next();
         return resultSet.getInt(1);
     }
+
+    public boolean checkClassExist(int year,String divison) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM class WHERE year = ? AND division=?);");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,divison);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
+
+    public void createClass(int year, String division) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO class(year,division) VALUES(?,?);");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        preparedStatement.executeUpdate();
+    }
+    public ResultSet getClassList() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class ORDER BY year,division;");
+        return preparedStatement.executeQuery();
+    }
+
+    public void deleteClass(int year,String division) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM class WHERE year = ? AND division =?;");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        preparedStatement.executeUpdate();
+    }
+
+    public int getClassCount() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM class");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
 }
