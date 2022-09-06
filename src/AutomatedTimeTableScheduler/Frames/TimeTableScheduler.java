@@ -65,6 +65,7 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
 
         //Coloring Buttons
         buttonPanel.timeSlotsButton.setBackground(Constant.BUTTON_BACKGROUND);
+        buttonPanel.classButton.setBackground(Constant.BUTTON_BACKGROUND);
         buttonPanel.timeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
 
         JButton buttonClicked = (JButton) e.getSource();

@@ -70,7 +70,7 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
     }
     public ResultSet getClassList() throws Exception{
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class ORDER BY year,division;");
         return preparedStatement.executeQuery();
     }
 
@@ -79,5 +79,12 @@ public class DatabaseCon {
         preparedStatement.setInt(1,year);
         preparedStatement.setString(2,division);
         preparedStatement.executeUpdate();
+    }
+
+    public int getClassCount() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM class");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
     }
 }

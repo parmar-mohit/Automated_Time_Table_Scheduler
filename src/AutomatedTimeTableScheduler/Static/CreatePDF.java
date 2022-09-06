@@ -45,14 +45,37 @@ public class CreatePDF extends Thread {
             PdfPTable table = new PdfPTable(db.getTimeSlotCount() + 1); //Creating Table
             addTableHeader(table);  //adding header to tables
 
-            table.addCell("TE A");
-            for (int j = 0; j < db.getTimeSlotCount(); j++) {
-                table.addCell("");
-            }
+            ResultSet classResultSet = db.getClassList();
+            while( classResultSet.next() ){
+                int year = classResultSet.getInt("year");
+                String division = classResultSet.getString("division");
 
-            table.addCell("TE B");
-            for (int j = 0; j < db.getTimeSlotCount(); j++) {
-                table.addCell("");
+                String className = new String();
+                switch ( year ){
+                    case 1:
+                        className = "FE";
+                        break;
+
+                    case 2:
+                        className = "SE";
+                        break;
+
+                    case 3:
+                        className = "TE";
+                        break;
+
+                    case 4:
+                        className = "BE";
+                        break;
+                }
+                className += " "+division;
+
+                table.addCell(className);
+
+                //Adding Cells for TimeSlots
+                for( int j = 0; j < db.getTimeSlotCount(); j++ ){
+                    table.addCell("");
+                }
             }
 
             //Adding Table to Document
