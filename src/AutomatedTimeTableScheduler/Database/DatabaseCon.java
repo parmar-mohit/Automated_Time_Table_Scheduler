@@ -73,4 +73,11 @@ public class DatabaseCon {
         PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class");
         return preparedStatement.executeQuery();
     }
+
+    public void deleteClass(int year,String division) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM class WHERE year = ? AND division =?;");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        preparedStatement.executeUpdate();
+    }
 }
