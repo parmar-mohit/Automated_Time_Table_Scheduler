@@ -69,4 +69,8 @@ public class DatabaseCon {
         preparedStatement.setString(2,division);
         preparedStatement.executeUpdate();
     }
+    public ResultSet getClassList() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class");
+        return preparedStatement.executeQuery();
+    }
 }

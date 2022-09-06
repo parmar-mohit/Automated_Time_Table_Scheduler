@@ -22,7 +22,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
         yearLabel = new JLabel("Year : ");
         yearComboBox = new JComboBox(new Object[]{1,2,3,4});
         divisionLabel = new JLabel("Division : ");
-        divisionComboBox = new JComboBox(new Object[]{"A","B","C"});
+        divisionComboBox = new JComboBox(new Object[]{"A","B","C","D"});
         messageLabel = new JLabel();
         createClassButton = new JButton("Create Class");
 
