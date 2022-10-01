@@ -41,45 +41,6 @@ public class CreatePDF extends Thread {
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
             document.add(new Paragraph("\n\n"));
-
-            PdfPTable table = new PdfPTable(db.getTimeSlotCount() + 1); //Creating Table
-            addTableHeader(table);  //adding header to tables
-
-            ResultSet classResultSet = db.getClassList();
-            while( classResultSet.next() ){
-                int year = classResultSet.getInt("year");
-                String division = classResultSet.getString("division");
-
-                String className = new String();
-                switch ( year ){
-                    case 1:
-                        className = "FE";
-                        break;
-
-                    case 2:
-                        className = "SE";
-                        break;
-
-                    case 3:
-                        className = "TE";
-                        break;
-
-                    case 4:
-                        className = "BE";
-                        break;
-                }
-                className += " "+division;
-
-                table.addCell(className);
-
-                //Adding Cells for TimeSlots
-                for( int j = 0; j < db.getTimeSlotCount(); j++ ){
-                    table.addCell("");
-                }
-            }
-
-            //Adding Table to Document
-            document.add(table);
         }
 
         //Closing Connection With Database
@@ -90,28 +51,5 @@ public class CreatePDF extends Thread {
     }
 
     private void addTableHeader(PdfPTable table) throws Exception{
-        DatabaseCon db = new DatabaseCon();
-
-        PdfPCell header = new PdfPCell();
-        header.setBackgroundColor(new BaseColor(66, 135, 245));
-        header.setPhrase(new Phrase("Class / Time"));
-        table.addCell(header);
-
-        ResultSet timeSlotResultSet = db.getTimeSlots();
-
-        while( timeSlotResultSet.next() ){
-            SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
-            String timeSlot = sdfTime.format(timeSlotResultSet.getTime("start_time"));
-            timeSlot += " - ";
-            timeSlot += sdfTime.format(timeSlotResultSet.getTime("end_time"));
-
-            header = new PdfPCell();
-            header.setBackgroundColor(new BaseColor(66, 135, 245));
-            header.setPhrase(new Phrase(timeSlot));
-            table.addCell(header);
-        }
-
-        //Closing Connection with Database
-        db.closeConnection();
     }
 }

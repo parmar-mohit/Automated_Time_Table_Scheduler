@@ -29,7 +29,7 @@ public class TimeField extends JPanel {
 
         //Editing Panel
         setLayout(new GridBagLayout());
-        setBackground(Constant.TIME_SELECTOR_PANEL_BACKGROUND);
+        setBackground(Constant.PANEL_BACKGROUND);
 
         //Adding Member to Panel
         add(timeTextField, Constraint.setPosition(0,0));

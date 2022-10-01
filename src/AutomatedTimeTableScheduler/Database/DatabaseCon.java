@@ -25,33 +25,16 @@ public class DatabaseCon {
         }
     }
 
-    public void insertTimeSlots(ArrayList<Time> startTimeList,ArrayList<Time> endTimeList) throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM time_slots;");
+    public void insertTimeInfo(Time startTime,Time endTime,Time breakStartTime, Time breakEndTime) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM time_info;");
         preparedStatement.executeUpdate();
 
-        preparedStatement = db.prepareStatement("INSERT INTO time_slots(start_time,end_time,day) VALUES(?,?,?);");
-        for( int i = 0; i < startTimeList.size(); i++ ) {
-            for (int j = 0; j < Constant.WEEK.length; j++) {
-                String day = Constant.WEEK[j];
-
-                preparedStatement.setTime(1, startTimeList.get(i));
-                preparedStatement.setTime(2,endTimeList.get(i));
-                preparedStatement.setString(3,day);
-                preparedStatement.executeUpdate();
-            }
-        }
-    }
-
-    public ResultSet getTimeSlots() throws Exception{
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT DISTINCT start_time,end_time FROM time_slots;");
-        return preparedStatement.executeQuery();
-    }
-
-    public int getTimeSlotCount() throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(DISTINCT start_time,end_time) FROM time_slots;");
-        ResultSet resultSet = preparedStatement.executeQuery();
-        resultSet.next();
-        return resultSet.getInt(1);
+        preparedStatement = db.prepareStatement("INSERT INTO time_info VALUES(?,?,?,?);");
+        preparedStatement.setTime(1,startTime);
+        preparedStatement.setTime(2,endTime);
+        preparedStatement.setTime(3,breakStartTime);
+        preparedStatement.setTime(4,breakEndTime);
+        preparedStatement.executeUpdate();
     }
 
     public boolean checkClassExist(int year,String divison) throws Exception{

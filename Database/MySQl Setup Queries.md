@@ -41,11 +41,11 @@ CREATE TABLE teacher(
         teacher_name VARCHAR(50)
 );
 
-CREATE TABLE time_slots(
-        time_id INT PRIMARY KEY AUTO_INCREMENT,
-        start_time TIME,
-        end_time TIME,
-        day VARCHAR(9)
+CREATE TABLE time_info(
+        college_start_time TIME,
+        college_end_time TIME,
+        break_start_time TIME,
+        break_end_time TIME
 );
 
 CREATE TABLE class_course(
@@ -72,48 +72,17 @@ CREATE TABLE course_teacher(
         FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE     
 );
 
-CREATE TABLE teacher_time(
-        teacher_id INT,
-        time_id INT,
-        is_available BIT,
-        PRIMARY KEY(teacher_id,time_id),
-        FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE,
-        FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE,
-        CHECK( is_available IN(1,0) )
-);
-
-CREATE TABLE room_time(
-        room_id INT,
-        time_id INT,
-        is_available BIT,
-        PRIMARY KEY(room_id,time_id),
-        FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE CASCADE,
-        FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE,
-        CHECK( is_available IN(1,0) )
-);
-
-CREATE TABLE class_time(
-        class_id INT,
-        time_id INT,
-        is_available BIT,
-        PRIMARY KEY(class_id,time_id),
-        FOREIGN KEY(class_id) REFERENCES class(class_id) ON DELETE CASCADE,
-        FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE,
-        CHECK( is_available IN(1,0) )
-);
-
 CREATE TABLE time_table(
     class_id INT,
     course_code VARCHAR(50),
     room_id INT,
     teacher_id INT,
-    time_id INT,
-    PRIMARY KEY(class_id,course_code,room_id,teacher_id,time_id),
+    start_time TIME,
+    end_time TIME,
     FOREIGN KEY(class_id) REFERENCES class(class_id) ON DELETE CASCADE,
     FOREIGN KEY(course_code) REFERENCES course(course_code) ON DELETE CASCADE,
     FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE CASCADE,
-    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE,
-    FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE
+    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE
 );
 ```
 

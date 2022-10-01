@@ -15,13 +15,12 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
 
     private boolean status;
-    private JLabel timeSlotsLabel,classLabel,statusLabel;
+    private JLabel classLabel,statusLabel;
     private JButton generateTimeTableButton;
     private DatabaseCon db;
 
     public  TimeTablePanel(){
         //Initialising Member
-        timeSlotsLabel = new JLabel();
         classLabel = new JLabel();
         statusLabel = new JLabel();
         generateTimeTableButton = new JButton("Generate Time Table");
@@ -30,7 +29,6 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         checkStatus();
 
         //Editing Members
-        timeSlotsLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         classLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         statusLabel.setFont(new Font("Times New Roman",Font.BOLD,24));
         generateTimeTableButton.setPreferredSize(Constant.BUTTON_SIZE);
@@ -44,10 +42,9 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         setBackground(Constant.PANEL_BACKGROUND);
 
         //Adding Member to Panel
-        add(timeSlotsLabel, Constraint.setPosition(0,0));
-        add(classLabel,Constraint.setPosition(0,1));
-        add(statusLabel, Constraint.setPosition(0,2));
-        add(generateTimeTableButton,Constraint.setPosition(0,3));
+        add(classLabel,Constraint.setPosition(0,0));
+        add(statusLabel, Constraint.setPosition(0,1));
+        add(generateTimeTableButton,Constraint.setPosition(0,2));
     }
 
     private void checkStatus(){
@@ -55,14 +52,6 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
         try{
             db = new DatabaseCon();
-
-            //Checking for TimeSlots
-            if( db.getTimeSlotCount() >= 2  ){
-                timeSlotsLabel.setText("Time Slots : All Ok");
-            }else{
-                timeSlotsLabel.setText("Time Slots : There should be minimum 2 Time Slots");
-                status = false;
-            }
 
             //Checking for Class
             if( db.getClassCount() >= 2  ){
@@ -90,19 +79,18 @@ public class TimeTablePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if( e.getSource() == generateTimeTableButton ){
-            try {
-                statusLabel.setText("Generating Time Table");
-
-
-                //Generating Time Table
-                CreatePDF pdfGenerator = new CreatePDF();
-                pdfGenerator.start();
-                pdfGenerator.join();
-
-                statusLabel.setText("Time Table Generated");
-            }catch(Exception excp){
-                System.out.println(excp);
-            }
+//            try {
+//                statusLabel.setText("Generating Time Table");
+//
+//                //Generating Time Table
+//                CreatePDF pdfGenerator = new CreatePDF();
+//                pdfGenerator.start();
+//                pdfGenerator.join();
+//
+//                statusLabel.setText("Time Table Generated");
+//            }catch(Exception excp){
+//                System.out.println(excp);
+//            }
         }
     }
 }
