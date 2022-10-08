@@ -85,4 +85,13 @@ public class DatabaseCon {
         resultSet.next();
         return resultSet.getInt(1);
     }
+
+    public void addCourse(String courseCode,String courseName,int sessionDuration,int sessionPerWeek) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO course VALUES(?,?,?,?);");
+        preparedStatement.setString(1,courseCode);
+        preparedStatement.setString(2,courseName);
+        preparedStatement.setInt(3,sessionPerWeek);
+        preparedStatement.setInt(4,sessionDuration);
+        preparedStatement.executeUpdate();
+    }
 }

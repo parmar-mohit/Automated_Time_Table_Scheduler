@@ -45,5 +45,19 @@ public class Constraint {
         t.setRepeats(false);
         t.start();
     }
+
+    public static String getFormattedText(String text){
+        String words[] = text.split(" ");
+        String formattedText = new String();
+
+        for( int i = 0; i < words.length; i++){
+            if( !formattedText.equals("") ){
+                formattedText += " ";
+            }
+            formattedText += Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+        }
+
+        return formattedText;
+    }
 }
 
