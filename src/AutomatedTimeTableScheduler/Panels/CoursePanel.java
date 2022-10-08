@@ -100,7 +100,7 @@ public class CoursePanel extends JPanel implements ActionListener {
                 String courseName = courseResultSet.getString(2);
                 int sessionPerWeek = courseResultSet.getInt(3);
                 int sessionDuration = courseResultSet.getInt(4);
-                CourseCardPanel courseCardPanel = new CourseCardPanel(courseCode,courseName,sessionDuration,sessionPerWeek);
+                CourseCardPanel courseCardPanel = new CourseCardPanel(courseCode,courseName,sessionDuration,sessionPerWeek,this);
                 courseCardPanel.setPreferredSize(new Dimension(950,150));
                 courseListPanel.add(courseCardPanel,Constraint.setPosition(0,coursePanelArrayList.size()));
                 coursePanelArrayList.add(courseCardPanel);

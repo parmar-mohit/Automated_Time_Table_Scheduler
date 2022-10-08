@@ -98,6 +98,13 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
 
         try{
             db = new DatabaseCon();
+
+            if( db.checkCourseExist(courseCode) ){
+                messageLabel.setText("A Course with same Course Code Exists");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+
             db.addCourse(courseCode,courseName,sessionDuration,sessionPerWeek);
             messageLabel.setText("Course Added");
             Constraint.labelDeleteAfterTime(messageLabel);

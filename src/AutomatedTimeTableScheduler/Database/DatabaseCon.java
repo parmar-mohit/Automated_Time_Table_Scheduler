@@ -86,6 +86,14 @@ public class DatabaseCon {
         return resultSet.getInt(1);
     }
 
+    public boolean checkCourseExist(String courseCode) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM course WHERE course_code = ?);");
+        preparedStatement.setString(1,courseCode);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
+
     public void addCourse(String courseCode,String courseName,int sessionDuration,int sessionPerWeek) throws Exception {
         PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO course VALUES(?,?,?,?);");
         preparedStatement.setString(1,courseCode);
@@ -98,5 +106,11 @@ public class DatabaseCon {
     public ResultSet getCourseList() throws Exception {
         PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course;");
         return preparedStatement.executeQuery();
+    }
+
+    public void deleteCourse(String courseCode) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM course WHERE course_code = ?;");
+        preparedStatement.setString(1,courseCode);
+        preparedStatement.executeUpdate();
     }
 }
