@@ -27,7 +27,7 @@ CREATE TABLE class (
 CREATE TABLE course (
         course_code VARCHAR(10) PRIMARY KEY,
         course_name VARCHAR(50),
-        min_hours_per_week INT,
+        session_per_week INT,
         session_duration INT
 );
 
