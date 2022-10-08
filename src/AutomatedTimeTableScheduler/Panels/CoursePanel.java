@@ -1,5 +1,6 @@
 package AutomatedTimeTableScheduler.Panels;
 
+import AutomatedTimeTableScheduler.CardPanel.CourseCardPanel;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -16,7 +17,7 @@ public class CoursePanel extends JPanel implements ActionListener {
     private JButton createCourseButton,backButton;
     private JPanel courseListPanel;
     private JScrollPane scrollPane;
-//    private ArrayList<ClassCardPanel> coursePanelArrayList;
+    private ArrayList<CourseCardPanel> coursePanelArrayList;
     private CreateCoursePanel createCoursePanel;
     private DatabaseCon db;
 
@@ -27,7 +28,7 @@ public class CoursePanel extends JPanel implements ActionListener {
         img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
         createCourseButton = new JButton("Create Course",new ImageIcon(img));
         courseListPanel = new JPanel();
-//        classPanelArrayList = new ArrayList<>();
+        coursePanelArrayList = new ArrayList<>();
         scrollPane = new JScrollPane(courseListPanel);
 
         //Editing Member Variables
@@ -87,18 +88,22 @@ public class CoursePanel extends JPanel implements ActionListener {
     }
 
     public void displayCourse(){
-//        classPanelArrayList = new ArrayList<>();
+        coursePanelArrayList = new ArrayList<>();
         courseListPanel.removeAll();
 
         try{
             db = new DatabaseCon();
 
-            ResultSet classResultSet = db.getClassList();
-            while( classResultSet.next() ){
-//                ClassCardPanel classCardPanel = new ClassCardPanel(classResultSet.getInt("year"),classResultSet.getString("division"),this);
-//                classCardPanel.setPreferredSize(new Dimension(950,75));
-//                courseListPanel.add(classCardPanel,Constraint.setPosition(0,classPanelArrayList.size()));
-//                classPanelArrayList.add(classCardPanel);
+            ResultSet courseResultSet = db.getCourseList();
+            while( courseResultSet.next() ){
+                String courseCode = courseResultSet.getString(1);
+                String courseName = courseResultSet.getString(2);
+                int sessionPerWeek = courseResultSet.getInt(3);
+                int sessionDuration = courseResultSet.getInt(4);
+                CourseCardPanel courseCardPanel = new CourseCardPanel(courseCode,courseName,sessionDuration,sessionPerWeek);
+                courseCardPanel.setPreferredSize(new Dimension(950,150));
+                courseListPanel.add(courseCardPanel,Constraint.setPosition(0,coursePanelArrayList.size()));
+                coursePanelArrayList.add(courseCardPanel);
                 courseListPanel.revalidate();
                 courseListPanel.repaint();
             }

@@ -94,4 +94,9 @@ public class DatabaseCon {
         preparedStatement.setInt(4,sessionDuration);
         preparedStatement.executeUpdate();
     }
+
+    public ResultSet getCourseList() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course;");
+        return preparedStatement.executeQuery();
+    }
 }
