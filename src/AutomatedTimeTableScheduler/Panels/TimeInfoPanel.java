@@ -9,19 +9,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.sql.Time;
+import java.util.ArrayList;
 
-public class TimeSlotsPanel extends JPanel implements ActionListener {
+public class TimeInfoPanel extends JPanel implements ActionListener {
 
     private JLabel panelNameLabel,startTimeLabel,endTimeLabel,breakStartTimeLabel,breakEndTimeLabel,messageLabel;
     private TimeField startTimeField,endTimeField,breakStartTimeField,breakEndTimeField;
-    private JButton generateTimeSlotsButton;
+    private JButton saveTimeInfoButton;
 
     private DatabaseCon db;
 
-    public TimeSlotsPanel() {
+    public TimeInfoPanel() {
         //Initialising Member Variables
         panelNameLabel = new JLabel("Time Slots");
         startTimeLabel = new JLabel("College Start Time : ");
@@ -32,22 +31,25 @@ public class TimeSlotsPanel extends JPanel implements ActionListener {
         breakStartTimeField = new TimeField();
         breakEndTimeLabel = new JLabel("Break End Time : ");
         breakEndTimeField = new TimeField();
-        generateTimeSlotsButton = new JButton("Generate Time Slots");
+        saveTimeInfoButton = new JButton("Save Time Details");
         messageLabel = new JLabel();
 
         //Editing Member Variables
         panelNameLabel.setFont(new Font("SansSerif", Font.PLAIN,20));
-        generateTimeSlotsButton.setBackground(Constant.BUTTON_BACKGROUND);
+        saveTimeInfoButton.setBackground(Constant.BUTTON_BACKGROUND);
 
         //Adding Listeners
-        generateTimeSlotsButton.addActionListener(this);
+        saveTimeInfoButton.addActionListener(this);
+
+        //Setting Available Data
+        setTimeInfo();
 
         //Editing Panel Details
         setLayout(new GridBagLayout());
         setBackground(Constant.PANEL_BACKGROUND);
 
         //Adding member to Panel
-        add(panelNameLabel, Constraint.setPosition(0,0,2,1));
+        add(panelNameLabel, Constraint.setPosition(1,0,2,1));
         add(startTimeLabel,Constraint.setPosition(0,1,Constraint.RIGHT));
         add(startTimeField,Constraint.setPosition(1,1,Constraint.LEFT));
         add(endTimeLabel,Constraint.setPosition(2,1,Constraint.RIGHT));
@@ -56,8 +58,8 @@ public class TimeSlotsPanel extends JPanel implements ActionListener {
         add(breakStartTimeField,Constraint.setPosition(1,2,Constraint.LEFT));
         add(breakEndTimeLabel,Constraint.setPosition(2,2,Constraint.RIGHT));
         add(breakEndTimeField,Constraint.setPosition(3,2,Constraint.LEFT));
-        add(generateTimeSlotsButton,Constraint.setPosition(1,3,2,1));
-        add(messageLabel,Constraint.setPosition(0,4,3,1));
+        add(saveTimeInfoButton,Constraint.setPosition(1,3,2,1));
+        add(messageLabel,Constraint.setPosition(1,4,2,1));
     }
 
     @Override
@@ -89,6 +91,12 @@ public class TimeSlotsPanel extends JPanel implements ActionListener {
         }
         Time breakStartTime = breakStartTimeField.getTime();
 
+        if( breakStartTime.before(collegeStartTime) ){
+            messageLabel.setText("Break Start Time Should be after College Start Time");
+            Constraint.labelDeleteAfterTime(messageLabel);
+            return;
+        }
+
         if( breakEndTimeField.getTime() == null ){
             messageLabel.setText("Enter Break End Time");
             Constraint.labelDeleteAfterTime(messageLabel);
@@ -102,12 +110,35 @@ public class TimeSlotsPanel extends JPanel implements ActionListener {
             return;
         }
 
+        if( breakEndTime.after(collegeEndTime) ){
+            messageLabel.setText("Break End Time Should be before College End Time");
+            Constraint.labelDeleteAfterTime(messageLabel);
+            return;
+        }
+
         try{
             db = new DatabaseCon();
             db.insertTimeInfo(collegeStartTime,collegeEndTime,breakStartTime,breakEndTime);
             messageLabel.setText("Time Info Updated");
         }catch(Exception excp){
             excp.printStackTrace();
+        }finally {
+            db.closeConnection();
+        }
+    }
+
+    private void setTimeInfo(){
+        try{
+            db = new DatabaseCon();
+            ArrayList<Time> timeInfoList = db.getTimeInfo();
+            if( timeInfoList != null ) {
+                startTimeField.setTime(timeInfoList.get(0));
+                endTimeField.setTime(timeInfoList.get(1));
+                breakStartTimeField.setTime(timeInfoList.get(2));
+                breakEndTimeField.setTime(timeInfoList.get(3));
+            }
+        }catch( Exception e){
+            e.printStackTrace();
         }finally {
             db.closeConnection();
         }

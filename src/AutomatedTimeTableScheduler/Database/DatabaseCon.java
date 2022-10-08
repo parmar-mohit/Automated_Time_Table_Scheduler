@@ -37,6 +37,21 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
     }
 
+    public ArrayList<Time> getTimeInfo() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM time_info;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if( resultSet.next() ) {
+            ArrayList<Time> timeInfoList = new ArrayList<>();
+            timeInfoList.add(resultSet.getTime("college_start_time"));
+            timeInfoList.add(resultSet.getTime("college_end_time"));
+            timeInfoList.add(resultSet.getTime("break_start_time"));
+            timeInfoList.add(resultSet.getTime("break_end_time"));
+            return timeInfoList;
+        }else {
+            return null;
+        }
+    }
+
     public boolean checkClassExist(int year,String divison) throws Exception{
         PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM class WHERE year = ? AND division=?);");
         preparedStatement.setInt(1,year);

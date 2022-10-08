@@ -1,7 +1,7 @@
 package AutomatedTimeTableScheduler.Frames;
 
 import AutomatedTimeTableScheduler.Panels.ClassPanel;
-import AutomatedTimeTableScheduler.Panels.TimeSlotsPanel;
+import AutomatedTimeTableScheduler.Panels.TimeInfoPanel;
 import AutomatedTimeTableScheduler.Panels.TimeTablePanel;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -56,7 +56,7 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
         }
 
         if (e.getSource() == buttonPanel.timeSlotsButton) {
-            optionPanel = new TimeSlotsPanel();
+            optionPanel = new TimeInfoPanel();
         }else if( e.getSource() == buttonPanel.classButton ){
             optionPanel = new ClassPanel();
         } else if( e.getSource() == buttonPanel.timeTableButton ){
