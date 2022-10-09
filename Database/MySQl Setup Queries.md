@@ -38,7 +38,8 @@ CREATE TABLE room(
 
 CREATE TABLE teacher(
         teacher_id INT PRIMARY KEY AUTO_INCREMENT,
-        teacher_name VARCHAR(50)
+        firstname VARCHAR(50),
+        lastname VARCHAR(50)
 );
 
 CREATE TABLE time_info(

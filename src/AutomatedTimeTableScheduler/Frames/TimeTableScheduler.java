@@ -1,9 +1,6 @@
 package AutomatedTimeTableScheduler.Frames;
 
-import AutomatedTimeTableScheduler.Panels.ClassPanel;
-import AutomatedTimeTableScheduler.Panels.CoursePanel;
-import AutomatedTimeTableScheduler.Panels.TimeInfoPanel;
-import AutomatedTimeTableScheduler.Panels.TimeTablePanel;
+import AutomatedTimeTableScheduler.Panels.*;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
 
@@ -35,6 +32,7 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
         buttonPanel.timeSlotsButton.addActionListener(this);
         buttonPanel.classButton.addActionListener(this);
         buttonPanel.courseButton.addActionListener(this);
+        buttonPanel.teacherButton.addActionListener(this);
         buttonPanel.timeTableButton.addActionListener(this);
 
         //Frame Details
@@ -63,6 +61,8 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
             optionPanel = new ClassPanel();
         }else if( e.getSource() == buttonPanel.courseButton ){
             optionPanel = new CoursePanel();
+        }else if( e.getSource() == buttonPanel.teacherButton ){
+            optionPanel = new TeacherPanel();
         }else if( e.getSource() == buttonPanel.timeTableButton ){
             optionPanel = new TimeTablePanel();
         }
@@ -71,6 +71,7 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
         buttonPanel.timeSlotsButton.setBackground(Constant.BUTTON_BACKGROUND);
         buttonPanel.classButton.setBackground(Constant.BUTTON_BACKGROUND);
         buttonPanel.courseButton.setBackground(Constant.BUTTON_BACKGROUND);
+        buttonPanel.teacherButton.setBackground(Constant.BUTTON_BACKGROUND);
         buttonPanel.timeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
 
         JButton buttonClicked = (JButton) e.getSource();
@@ -87,13 +88,14 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
 
 class ButtonPanel extends JPanel{
 
-    public JButton timeSlotsButton,classButton,courseButton,timeTableButton;
+    public JButton timeSlotsButton,classButton,courseButton,teacherButton,timeTableButton;
 
     public ButtonPanel(){
         //Initialising Variables
         timeSlotsButton = new JButton("Time Slots");
         classButton = new JButton("Class");
         courseButton = new JButton("Course");
+        teacherButton = new JButton("Teacher");
         timeTableButton = new JButton("Time Table");
 
         //Editing Components
@@ -103,6 +105,8 @@ class ButtonPanel extends JPanel{
         classButton.setBackground(Constant.BUTTON_BACKGROUND);
         courseButton.setPreferredSize(Constant.BUTTON_SIZE);
         courseButton.setBackground(Constant.BUTTON_BACKGROUND);
+        teacherButton.setPreferredSize(Constant.BUTTON_SIZE);
+        teacherButton.setBackground(Constant.BUTTON_BACKGROUND);
         timeTableButton.setPreferredSize(Constant.BUTTON_SIZE);
         timeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
 
@@ -114,6 +118,7 @@ class ButtonPanel extends JPanel{
         add(timeSlotsButton, Constraint.setPosition(0,0));
         add(classButton,Constraint.setPosition(0,1));
         add(courseButton,Constraint.setPosition(0,2));
-        add(timeTableButton,Constraint.setPosition(0,3));
+        add(teacherButton,Constraint.setPosition(0,3));
+        add(timeTableButton,Constraint.setPosition(0,4));
     }
 }
