@@ -120,4 +120,9 @@ public class DatabaseCon {
         preparedStatement.setString(2,lastname);
         preparedStatement.executeUpdate();
     }
+
+    public ResultSet getTeacherList() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM teacher;");
+        return preparedStatement.executeQuery();
+    }
 }

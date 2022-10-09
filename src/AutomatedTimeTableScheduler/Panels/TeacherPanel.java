@@ -1,5 +1,6 @@
 package AutomatedTimeTableScheduler.Panels;
 
+import AutomatedTimeTableScheduler.CardPanel.TeacherCardPanel;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -9,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class TeacherPanel extends JPanel implements ActionListener {
 
@@ -16,7 +18,7 @@ public class TeacherPanel extends JPanel implements ActionListener {
     private JButton addTeacherButton,backButton;
     private JPanel teacherListPanel;
     private JScrollPane scrollPane;
-//    private ArrayList<ClassCardPanel> teacherPanelArrayList;
+    private ArrayList<TeacherCardPanel> teacherPanelArrayList;
     private AddTeacherPanel addTeacherPanel;
     private DatabaseCon db;
 
@@ -27,7 +29,7 @@ public class TeacherPanel extends JPanel implements ActionListener {
         img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
         addTeacherButton = new JButton("Add Teacher",new ImageIcon(img));
         teacherListPanel = new JPanel();
-//        teacherPanelArrayList = new ArrayList<>();
+        teacherPanelArrayList = new ArrayList<>();
         scrollPane = new JScrollPane(teacherListPanel);
 
         //Editing Member Variables
@@ -82,25 +84,29 @@ public class TeacherPanel extends JPanel implements ActionListener {
 
             //Making Components Visible
             addTeacherButton.setVisible(true);
+
             scrollPane.setVisible(true);
         }
     }
 
     public void displayTeacher(){
-//        teacherPanelArrayList = new ArrayList<>();
+        teacherPanelArrayList = new ArrayList<>();
         teacherListPanel.removeAll();
 
         try{
             db = new DatabaseCon();
 
-            ResultSet classResultSet = db.getClassList();
-            while( classResultSet.next() ){
-//                ClassCardPanel classCardPanel = new ClassCardPanel(classResultSet.getInt("year"),classResultSet.getString("division"),this);
-//                classCardPanel.setPreferredSize(new Dimension(950,75));
-//                teacherListPanel.add(classCardPanel,Constraint.setPosition(0, teacherPanelArrayList.size()));
-//                teacherPanelArrayList.add(classCardPanel);
-//                teacherListPanel.revalidate();
-//                teacherListPanel.repaint();
+            ResultSet teacherResultSet = db.getTeacherList();
+            while( teacherResultSet.next() ){
+                int teacherId = teacherResultSet.getInt("teacher_id");
+                String firstname = teacherResultSet.getString("firstname");
+                String lastname = teacherResultSet.getString("lastname");
+                TeacherCardPanel teacherCardPanel = new TeacherCardPanel(firstname,lastname,teacherId);
+                teacherCardPanel.setPreferredSize(new Dimension(950,75));
+                teacherListPanel.add(teacherCardPanel,Constraint.setPosition(0, teacherPanelArrayList.size()));
+                teacherPanelArrayList.add(teacherCardPanel);
+                teacherListPanel.revalidate();
+                teacherListPanel.repaint();
             }
         }catch(Exception e){
             System.out.println(e);
