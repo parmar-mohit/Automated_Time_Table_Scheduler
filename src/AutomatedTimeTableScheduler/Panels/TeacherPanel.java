@@ -101,7 +101,7 @@ public class TeacherPanel extends JPanel implements ActionListener {
                 int teacherId = teacherResultSet.getInt("teacher_id");
                 String firstname = teacherResultSet.getString("firstname");
                 String lastname = teacherResultSet.getString("lastname");
-                TeacherCardPanel teacherCardPanel = new TeacherCardPanel(firstname,lastname,teacherId);
+                TeacherCardPanel teacherCardPanel = new TeacherCardPanel(firstname,lastname,teacherId,this);
                 teacherCardPanel.setPreferredSize(new Dimension(950,75));
                 teacherListPanel.add(teacherCardPanel,Constraint.setPosition(0, teacherPanelArrayList.size()));
                 teacherPanelArrayList.add(teacherCardPanel);
