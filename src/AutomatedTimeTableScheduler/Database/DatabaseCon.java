@@ -131,4 +131,10 @@ public class DatabaseCon {
         preparedStatement.setInt(1,teacherId);
         preparedStatement.executeUpdate();
     }
+
+    public void addClassroom(String roomName) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO room(room_name) VALUES(?);");
+        preparedStatement.setString(1,roomName);
+        preparedStatement.executeUpdate();
+    }
 }
