@@ -24,7 +24,7 @@ public class TeacherPanel extends JPanel implements ActionListener {
 
     public TeacherPanel(){
         //Initialising Member Variables
-        panelNameLabel = new JLabel("Class");
+        panelNameLabel = new JLabel("Teacher");
         Image img = new ImageIcon(Constant.ADD_ICON).getImage();
         img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
         addTeacherButton = new JButton("Add Teacher",new ImageIcon(img));

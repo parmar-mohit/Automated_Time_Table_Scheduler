@@ -131,4 +131,21 @@ public class DatabaseCon {
         preparedStatement.setInt(1,teacherId);
         preparedStatement.executeUpdate();
     }
+
+    public void addClassroom(String roomName) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO room(room_name) VALUES(?);");
+        preparedStatement.setString(1,roomName);
+        preparedStatement.executeUpdate();
+    }
+
+    public ResultSet getClassroomList() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM room");
+        return preparedStatement.executeQuery();
+    }
+
+    public void deleteClassroom(int roomId) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM room WHERE room_id = ?;");
+        preparedStatement.setInt(1,roomId);
+        preparedStatement.executeUpdate();
+    }
 }
