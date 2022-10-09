@@ -1,6 +1,7 @@
 package AutomatedTimeTableScheduler.Panels;
 
 import AutomatedTimeTableScheduler.CardPanel.CourseCardPanel;
+import AutomatedTimeTableScheduler.CreatePanels.CreateCoursePanel;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -90,6 +91,8 @@ public class CoursePanel extends JPanel implements ActionListener {
     public void displayCourse(){
         coursePanelArrayList = new ArrayList<>();
         courseListPanel.removeAll();
+        courseListPanel.revalidate();
+        courseListPanel.repaint();
 
         try{
             db = new DatabaseCon();

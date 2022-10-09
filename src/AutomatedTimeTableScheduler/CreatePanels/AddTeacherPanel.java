@@ -1,4 +1,4 @@
-package AutomatedTimeTableScheduler.Panels;
+package AutomatedTimeTableScheduler.CreatePanels;
 
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
