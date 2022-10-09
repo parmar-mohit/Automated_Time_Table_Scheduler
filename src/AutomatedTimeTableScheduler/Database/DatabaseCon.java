@@ -142,4 +142,10 @@ public class DatabaseCon {
         PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM room");
         return preparedStatement.executeQuery();
     }
+
+    public void deleteClassroom(int roomId) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM room WHERE room_id = ?;");
+        preparedStatement.setInt(1,roomId);
+        preparedStatement.executeUpdate();
+    }
 }

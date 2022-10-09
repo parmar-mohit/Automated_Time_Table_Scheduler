@@ -41,7 +41,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
         addClassroomButton.addActionListener(this);
 
         //Displaying Class Stored in Database
-        displayClass();
+        displayClassroom();
 
         //Editing Panel
         setLayout(new GridBagLayout());
@@ -79,7 +79,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
             remove(addClassroomPanel);
 
             //Displaying Class Stored in Database
-            displayClass();
+            displayClassroom();
 
             //Making Components Visible
             addClassroomButton.setVisible(true);
@@ -87,7 +87,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
         }
     }
 
-    public void displayClass(){
+    public void displayClassroom(){
         classroomPanelArrayList = new ArrayList<>();
         classroomListPanel.removeAll();
 
@@ -98,7 +98,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
             while( classroomResultSet.next() ){
                 String roomName = classroomResultSet.getString("room_name");
                 int roomId = classroomResultSet.getInt("room_id");
-                ClassroomCardPanel classroomCardPanel = new ClassroomCardPanel(roomName,roomId);
+                ClassroomCardPanel classroomCardPanel = new ClassroomCardPanel(roomName,roomId,this);
                 classroomCardPanel.setPreferredSize(new Dimension(950,75));
                 classroomListPanel.add(classroomCardPanel,Constraint.setPosition(0, classroomPanelArrayList.size()));
                 classroomPanelArrayList.add(classroomCardPanel);
