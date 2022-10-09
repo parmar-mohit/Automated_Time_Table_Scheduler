@@ -148,4 +148,25 @@ public class DatabaseCon {
         preparedStatement.setInt(1,roomId);
         preparedStatement.executeUpdate();
     }
+
+    public int getCourseCount() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM course;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public int getTeacherCount() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM teacher;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public int getClassroomCount() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM room;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
 }
