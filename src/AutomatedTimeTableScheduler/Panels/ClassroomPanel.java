@@ -1,5 +1,6 @@
 package AutomatedTimeTableScheduler.Panels;
 
+import AutomatedTimeTableScheduler.CardPanel.ClassroomCardPanel;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -9,13 +10,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class ClassroomPanel extends JPanel implements ActionListener {
     private JLabel panelNameLabel;
     private JButton addClassroomButton,backButton;
     private JPanel classroomListPanel;
     private JScrollPane scrollPane;
-//    private ArrayList<ClassCardPanel> classroomPanelArrayList;
+    private ArrayList<ClassroomCardPanel> classroomPanelArrayList;
     private AddClassroomPanel addClassroomPanel;
     private DatabaseCon db;
 
@@ -26,7 +28,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
         img = img.getScaledInstance(30, 30, Image.SCALE_DEFAULT);
         addClassroomButton = new JButton("Add Classroom",new ImageIcon(img));
         classroomListPanel = new JPanel();
-//        classroomPanelArrayList = new ArrayList<>();
+        classroomPanelArrayList = new ArrayList<>();
         scrollPane = new JScrollPane(classroomListPanel);
 
         //Editing Member Variables
@@ -86,20 +88,22 @@ public class ClassroomPanel extends JPanel implements ActionListener {
     }
 
     public void displayClass(){
-//        classroomPanelArrayList = new ArrayList<>();
+        classroomPanelArrayList = new ArrayList<>();
         classroomListPanel.removeAll();
 
         try{
             db = new DatabaseCon();
 
-            ResultSet classResultSet = db.getClassList();
-            while( classResultSet.next() ){
-//                ClassCardPanel classCardPanel = new ClassCardPanel(classResultSet.getInt("year"),classResultSet.getString("division"),this);
-//                classCardPanel.setPreferredSize(new Dimension(950,75));
-//                classroomListPanel.add(classCardPanel,Constraint.setPosition(0, classroomPanelArrayList.size()));
-//                classroomPanelArrayList.add(classCardPanel);
-//                classroomListPanel.revalidate();
-//                classroomListPanel.repaint();
+            ResultSet classroomResultSet = db.getClassroomList();
+            while( classroomResultSet.next() ){
+                String roomName = classroomResultSet.getString("room_name");
+                int roomId = classroomResultSet.getInt("room_id");
+                ClassroomCardPanel classroomCardPanel = new ClassroomCardPanel(roomName,roomId);
+                classroomCardPanel.setPreferredSize(new Dimension(950,75));
+                classroomListPanel.add(classroomCardPanel,Constraint.setPosition(0, classroomPanelArrayList.size()));
+                classroomPanelArrayList.add(classroomCardPanel);
+                classroomListPanel.revalidate();
+                classroomListPanel.repaint();
             }
         }catch(Exception e){
             System.out.println(e);

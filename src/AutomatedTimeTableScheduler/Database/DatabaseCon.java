@@ -137,4 +137,9 @@ public class DatabaseCon {
         preparedStatement.setString(1,roomName);
         preparedStatement.executeUpdate();
     }
+
+    public ResultSet getClassroomList() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM room");
+        return preparedStatement.executeQuery();
+    }
 }
