@@ -9,19 +9,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 
 public class TimeTablePanel extends JPanel implements ActionListener {
 
 
     private boolean status;
-    private JLabel classLabel,statusLabel;
+    private JLabel timeLabel,classLabel,courseLabel,teacherLabel,classroomLabel,statusLabel;
     private JButton generateTimeTableButton;
     private DatabaseCon db;
 
     public  TimeTablePanel(){
         //Initialising Member
+        timeLabel = new JLabel();
         classLabel = new JLabel();
+        courseLabel = new JLabel();
+        teacherLabel = new JLabel();
+        classroomLabel = new JLabel();
         statusLabel = new JLabel();
         generateTimeTableButton = new JButton("Generate Time Table");
 
@@ -29,7 +34,11 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         checkStatus();
 
         //Editing Members
+        timeLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         classLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
+        courseLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
+        teacherLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
+        classroomLabel.setFont(new Font("Times New Roman",Font.BOLD,18));
         statusLabel.setFont(new Font("Times New Roman",Font.BOLD,24));
         generateTimeTableButton.setPreferredSize(Constant.BUTTON_SIZE);
         generateTimeTableButton.setBackground(Constant.BUTTON_BACKGROUND);
@@ -42,9 +51,13 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         setBackground(Constant.PANEL_BACKGROUND);
 
         //Adding Member to Panel
-        add(classLabel,Constraint.setPosition(0,0));
-        add(statusLabel, Constraint.setPosition(0,1));
-        add(generateTimeTableButton,Constraint.setPosition(0,2));
+        add(timeLabel,Constraint.setPosition(0,0));
+        add(classLabel,Constraint.setPosition(0,1));
+        add(courseLabel,Constraint.setPosition(0,2));
+        add(teacherLabel,Constraint.setPosition(0,3));
+        add(classroomLabel,Constraint.setPosition(0,4));
+        add(statusLabel, Constraint.setPosition(0,5));
+        add(generateTimeTableButton,Constraint.setPosition(0,6));
     }
 
     private void checkStatus(){
@@ -53,11 +66,43 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         try{
             db = new DatabaseCon();
 
+            //Checking for Time
+            if( db.getTimeInfo() != null ){
+                timeLabel.setText("Time : All Ok");
+            }else{
+                timeLabel.setText("Time : Time Values not Entered");
+                status = false;
+            }
+
             //Checking for Class
             if( db.getClassCount() >= 2  ){
                 classLabel.setText("Class : All Ok");
             }else{
                 classLabel.setText("Class : There should be minimum 2 Classes");
+                status = false;
+            }
+
+            //Checking for course
+            if( db.getCourseCount() >= 2 ){
+                courseLabel.setText("Course : All Ok");
+            }else{
+                courseLabel.setText("Course : There should be Minimum 2 Courses");
+                status = false;
+            }
+
+            //Checking for teacher
+            if( db.getTeacherCount() >= 2 ){
+                teacherLabel.setText("Teacher : All Ok");
+            }else{
+                teacherLabel.setText("Teacher : There should be Minimum 2 Teacher");
+                status = false;
+            }
+
+            //Checking for classroom
+            if( db.getClassroomCount() >= 2 ){
+                classroomLabel.setText("Classroom : All Ok");
+            }else{
+                classroomLabel.setText("Classroom : There should be Minimum 2 Teacher");
                 status = false;
             }
         }catch(Exception e){
@@ -79,18 +124,30 @@ public class TimeTablePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if( e.getSource() == generateTimeTableButton ){
-//            try {
-//                statusLabel.setText("Generating Time Table");
-//
-//                //Generating Time Table
-//                CreatePDF pdfGenerator = new CreatePDF();
-//                pdfGenerator.start();
-//                pdfGenerator.join();
-//
-//                statusLabel.setText("Time Table Generated");
-//            }catch(Exception excp){
-//                System.out.println(excp);
-//            }
+            try {
+                statusLabel.setText("Generating Time Table");
+
+                //Creating TimeTable Directory
+                File file = new File("TimeTable");
+                file.mkdir();
+                CreatePDF.createMasterTimeTable();
+
+                //Creating Class Time Table
+                file = new File("TimeTable/Class");
+                file.mkdir();
+
+                //Creating Teacher Time Table
+                file = new File("TimeTable/Teacher");
+                file.mkdir();
+
+                //Creating Classroom Time Table
+                file = new File("TimeTable/Classroom");
+                file.mkdir();
+
+                statusLabel.setText("Time Table Generated");
+            }catch(Exception excp){
+                System.out.println(excp);
+            }
         }
     }
 }
