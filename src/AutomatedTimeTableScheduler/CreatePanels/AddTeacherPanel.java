@@ -8,8 +8,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class AddTeacherPanel extends JPanel implements ActionListener {
+public class AddTeacherPanel extends JPanel implements ActionListener, KeyListener {
 
     private JLabel panelNameLabel,firstnameLabel,lastnameLabel,messageLabel;
     private JTextField firstnameTextField,lastnameTextField;
@@ -30,6 +32,8 @@ public class AddTeacherPanel extends JPanel implements ActionListener {
         panelNameLabel.setFont(new Font("SansSerif",Font.PLAIN,18));
 
         //Adding Listeners
+        firstnameTextField.addKeyListener(this);
+        lastnameTextField.addKeyListener(this);
         addTeacherButton.addActionListener(this);
 
         //Editing Panel
@@ -77,5 +81,22 @@ public class AddTeacherPanel extends JPanel implements ActionListener {
         }catch(Exception excp){
             excp.printStackTrace();
         }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if( !Character.isAlphabetic(e.getKeyChar()) ){
+            e.consume();
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }

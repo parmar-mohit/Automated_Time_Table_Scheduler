@@ -144,7 +144,7 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 file = new File("TimeTable/Classroom");
                 file.mkdir();
 
-                statusLabel.setText("Time Table Generated");
+                statusLabel.setText("Time Table Generated");  
             }catch(Exception excp){
                 System.out.println(excp);
             }
