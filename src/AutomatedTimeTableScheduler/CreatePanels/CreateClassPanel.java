@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class CreateClassPanel extends JPanel implements ActionListener {
 
-    private JLabel panelNameLabel,yearLabel,divisionLabel,messageLabel;
+    private JLabel panelNameLabel, classLabel,divisionLabel,messageLabel;
     private JComboBox yearComboBox,divisionComboBox;
     private JButton createClassButton;
     private DatabaseCon db;
@@ -19,8 +19,8 @@ public class CreateClassPanel extends JPanel implements ActionListener {
     public CreateClassPanel(){
         //Initialising Member
         panelNameLabel = new JLabel("Create Class");
-        yearLabel = new JLabel("Year : ");
-        yearComboBox = new JComboBox(new Object[]{1,2,3,4});
+        classLabel = new JLabel("Class : ");
+        yearComboBox = new JComboBox(new Object[]{"FE","SE","TE","BE"});
         divisionLabel = new JLabel("Division : ");
         divisionComboBox = new JComboBox(new Object[]{"A","B","C","D"});
         messageLabel = new JLabel();
@@ -38,7 +38,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
 
         //Adding Member to Panel
         add(panelNameLabel, Constraint.setPosition(0,0,4,1));
-        add(yearLabel,Constraint.setPosition(0,1,Constraint.RIGHT));
+        add(classLabel,Constraint.setPosition(0,1,Constraint.RIGHT));
         add(yearComboBox,Constraint.setPosition(1,1,Constraint.LEFT));
         add(divisionLabel,Constraint.setPosition(2,1,Constraint.RIGHT));
         add(divisionComboBox,Constraint.setPosition(3,1,Constraint.LEFT));
@@ -54,7 +54,17 @@ public class CreateClassPanel extends JPanel implements ActionListener {
                 Constraint.labelDeleteAfterTime(messageLabel);
                 return;
             }
-            int year = (int)yearComboBox.getSelectedItem();
+            String yearString = yearComboBox.getSelectedItem().toString();
+            int year = 0;
+            if( yearString.equals("FE") ){
+                year = 1;
+            }else if( yearString.equals("SE") ){
+                year = 2;
+            }else if( yearString.equals("TE") ){
+                year = 3;
+            }else{
+                year = 4;
+            }
 
             if( divisionComboBox.getSelectedItem() == null ){
                 messageLabel.setText("Select Division");
