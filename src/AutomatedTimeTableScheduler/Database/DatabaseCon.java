@@ -169,4 +169,25 @@ public class DatabaseCon {
         resultSet.next();
         return resultSet.getInt(1);
     }
+
+    public int getTimeSlotCount() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM time_info;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+
+        Time currentTime = resultSet.getTime("college_start_time");
+        int slotCount = 0;
+        while( currentTime.before(resultSet.getTime("college_end_time")) ){
+            if( currentTime.equals(resultSet.getTime("break_start_time")) ){
+                currentTime = resultSet.getTime("break_end_time");
+                continue;
+            }
+
+            slotCount++;
+            //Increment Time by 1 hour
+            currentTime = new Time(currentTime.getTime()+3600000);  //3600000 ms = 1 hr
+        }
+
+        return slotCount;
+    }
 }

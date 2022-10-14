@@ -9,7 +9,7 @@ CREATE DATABASE timetable;
 
 CREATE USER 'timetable_user' IDENTIFIED BY 'timetable_pass';
 
-GRANT ALL PRIVILEGES ON school_app.* TO 'timetable_user';
+GRANT ALL PRIVILEGES ON timetable.* TO 'timetable_user';
 
 FLUSH PRIVILEGES;
 ```
