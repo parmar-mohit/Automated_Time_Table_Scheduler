@@ -135,6 +135,7 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 //Creating Class Time Table
                 file = new File("TimeTable/Class");
                 file.mkdir();
+                CreatePDF.createClassTimeTable();
 
                 //Creating Teacher Time Table
                 file = new File("TimeTable/Teacher");
