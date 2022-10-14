@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class ClassCardPanel extends JPanel implements ActionListener {
 
-    private JLabel yearLabel,divisionLabel;
+    private JLabel classLabel,divisionLabel;
     private JButton deleteClassButton;
     private DatabaseCon db;
     private ClassPanel parentPanel;
@@ -24,7 +24,25 @@ public class ClassCardPanel extends JPanel implements ActionListener {
         this.division = division;
         this.parentPanel = parentPanel;
         //Initialising Members
-        yearLabel = new JLabel("Year : "+year);
+        String yearString = "";
+        switch( year ){
+            case 1:
+                yearString = "FE";
+                break;
+
+            case 2:
+                yearString = "SE";
+                break;
+
+            case 3:
+                yearString = "TE";
+                break;
+
+            case 4:
+                yearString = "BE";
+                break;
+        }
+        classLabel = new JLabel("Class : "+yearString);
         divisionLabel = new JLabel("Division : "+division);
         deleteClassButton = new JButton("Delete");
 
@@ -39,7 +57,7 @@ public class ClassCardPanel extends JPanel implements ActionListener {
         setBackground(Constant.PANEL_BACKGROUND);
 
         //Adding Members to Panel
-        add(yearLabel, Constraint.setPosition(0,0));
+        add(classLabel, Constraint.setPosition(0,0));
         add(divisionLabel,Constraint.setPosition(1,0));
         add(deleteClassButton,Constraint.setPosition(2,0));
     }
