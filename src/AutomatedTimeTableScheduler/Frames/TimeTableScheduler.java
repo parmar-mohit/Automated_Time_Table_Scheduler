@@ -23,10 +23,10 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
         //Editing Members
         appNameLabel.setFont(new Font("Times New Roman",Font.BOLD,26));
         appNameLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        appNameLabel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width, Constant.SCREEN_SIZE.height / 5));
-        appNameLabel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width, Constant.SCREEN_SIZE.height / 5));
-        buttonPanel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width / 5, Constant.SCREEN_SIZE.height * 4 / 5));
-        buttonPanel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width / 5, Constant.SCREEN_SIZE.height * 4 / 5));
+        appNameLabel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width, 100));
+        appNameLabel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width, 100));
+        buttonPanel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width / 5, Constant.SCREEN_SIZE.height - 100));
+        buttonPanel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width / 5, Constant.SCREEN_SIZE.height - 100));
 
         //Adding Listeners
         buttonPanel.timeSlotsButton.addActionListener(this);
@@ -81,8 +81,8 @@ public class TimeTableScheduler extends JFrame implements ActionListener {
         JButton buttonClicked = (JButton) e.getSource();
         buttonClicked.setBackground(Constant.SELECTED_BUTTON);
 
-        optionPanel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width * 4 / 5, Constant.SCREEN_SIZE.height * 4 / 5));
-        optionPanel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width * 4 / 5, Constant.SCREEN_SIZE.height * 4 / 5));
+        optionPanel.setMinimumSize(new Dimension(Constant.SCREEN_SIZE.width * 4 / 5, Constant.SCREEN_SIZE.height-100));
+        optionPanel.setPreferredSize(new Dimension(Constant.SCREEN_SIZE.width * 4 / 5, Constant.SCREEN_SIZE.height-100));
         add(optionPanel, Constraint.setPosition(1, 1));
         optionPanel.setVisible(true);
         revalidate();
@@ -123,8 +123,8 @@ class ButtonPanel extends JPanel{
 
         //Adding Member to Panel
         add(timeSlotsButton, Constraint.setPosition(0,0));
-        add(classButton,Constraint.setPosition(0,1));
-        add(courseButton,Constraint.setPosition(0,2));
+        add(courseButton,Constraint.setPosition(0,1));
+        add(classButton,Constraint.setPosition(0,2));
         add(teacherButton,Constraint.setPosition(0,3));
         add(classroomButton,Constraint.setPosition(0,4));
         add(timeTableButton,Constraint.setPosition(0,5));

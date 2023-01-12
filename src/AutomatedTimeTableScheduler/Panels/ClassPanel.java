@@ -63,7 +63,7 @@ public class ClassPanel extends JPanel implements ActionListener {
             createClassPanel = new CreateClassPanel();
 
             //Editing Members
-            createClassPanel.setPreferredSize(new Dimension(1000,400));
+            createClassPanel.setPreferredSize(new Dimension(1000,550));
 
             //Adding Listeners
             backButton.addActionListener(this);
