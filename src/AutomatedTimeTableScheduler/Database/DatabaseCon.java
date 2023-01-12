@@ -61,11 +61,23 @@ public class DatabaseCon {
         return resultSet.getBoolean(1);
     }
 
-    public void createClass(int year, String division) throws Exception{
+    public void createClass(int year, String division,ArrayList<String> courseCodeList) throws Exception{
         PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO class(year,division) VALUES(?,?);");
         preparedStatement.setInt(1,year);
         preparedStatement.setString(2,division);
         preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("SELECT LAST_INSERT_ID()");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        int classId = resultSet.getInt(1);
+
+        preparedStatement = db.prepareStatement("INSERT INTO class_course VALUES(?,?);");
+        preparedStatement.setInt(1,classId);
+        for( int i = 0; i < courseCodeList.size(); i++){
+            preparedStatement.setString(2,courseCodeList.get(i));
+            preparedStatement.executeUpdate();
+        }
     }
     public ResultSet getClassList() throws Exception{
         PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class ORDER BY year,division;");

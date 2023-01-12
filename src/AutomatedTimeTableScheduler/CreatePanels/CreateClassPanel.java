@@ -1,5 +1,6 @@
 package AutomatedTimeTableScheduler.CreatePanels;
 
+import AutomatedTimeTableScheduler.CustomComponents.ClassCourseTable;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -8,11 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class CreateClassPanel extends JPanel implements ActionListener {
 
     private JLabel panelNameLabel, classLabel,divisionLabel,messageLabel;
     private JComboBox yearComboBox,divisionComboBox;
+    private ClassCourseTable classCourseTable;
     private JButton createClassButton;
     private DatabaseCon db;
 
@@ -23,6 +26,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
         yearComboBox = new JComboBox(new Object[]{"FE","SE","TE","BE"});
         divisionLabel = new JLabel("Division : ");
         divisionComboBox = new JComboBox(new Object[]{"A","B","C","D"});
+        classCourseTable = new ClassCourseTable();
         messageLabel = new JLabel();
         createClassButton = new JButton("Create Class");
 
@@ -31,6 +35,9 @@ public class CreateClassPanel extends JPanel implements ActionListener {
 
         //Adding Listener
         createClassButton.addActionListener(this);
+
+        //Filling Table
+        fillTable();
 
         //Editing Panel
         setLayout(new GridBagLayout());
@@ -42,8 +49,9 @@ public class CreateClassPanel extends JPanel implements ActionListener {
         add(yearComboBox,Constraint.setPosition(1,1,Constraint.LEFT));
         add(divisionLabel,Constraint.setPosition(2,1,Constraint.RIGHT));
         add(divisionComboBox,Constraint.setPosition(3,1,Constraint.LEFT));
-        add(messageLabel,Constraint.setPosition(0,2,4,1));
-        add(createClassButton,Constraint.setPosition(0,3,4,1));
+        add(classCourseTable.getScrollPane(),Constraint.setPosition(0,2,4,1));
+        add(messageLabel,Constraint.setPosition(0,3,4,1));
+        add(createClassButton,Constraint.setPosition(0,4,4,1));
     }
 
     @Override
@@ -73,6 +81,18 @@ public class CreateClassPanel extends JPanel implements ActionListener {
             }
             String division = divisionComboBox.getSelectedItem().toString();
 
+            ArrayList<String> courseCodeList = new ArrayList<>(5);
+            for( int i = 0; i < classCourseTable.getRowCount(); i++ ){
+                if( classCourseTable.getSelection(i) ){
+                    courseCodeList.add((String)classCourseTable.getValueAt(i,0) );
+                }
+            }
+            if( courseCodeList.size() < 5 ){
+                messageLabel.setText("Please select atleast 5 courses for this class");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+
             try{
                 db = new DatabaseCon();
 
@@ -82,7 +102,8 @@ public class CreateClassPanel extends JPanel implements ActionListener {
                     return;
                 }
 
-                db.createClass(year,division);
+                db.createClass(year,division,courseCodeList);
+                classCourseTable.reset();
                 messageLabel.setText("Class Created");
                 Constraint.labelDeleteAfterTime(messageLabel);
             }catch (Exception excp){
@@ -90,6 +111,15 @@ public class CreateClassPanel extends JPanel implements ActionListener {
             }finally {
                 db.closeConnection();
             }
+        }
+    }
+
+    private void fillTable(){
+        try{
+            db = new DatabaseCon();
+            classCourseTable.setCourseList(db.getCourseList());
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 }
