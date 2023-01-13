@@ -1,6 +1,6 @@
 package AutomatedTimeTableScheduler.CreatePanels;
 
-import AutomatedTimeTableScheduler.CustomComponents.ClassCourseTable;
+import AutomatedTimeTableScheduler.CustomComponents.CourseSelectionTable;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -15,7 +15,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
 
     private JLabel panelNameLabel, classLabel,divisionLabel,messageLabel;
     private JComboBox yearComboBox,divisionComboBox;
-    private ClassCourseTable classCourseTable;
+    private CourseSelectionTable classCourseTable;
     private JButton createClassButton;
     private DatabaseCon db;
 
@@ -26,7 +26,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
         yearComboBox = new JComboBox(new Object[]{"FE","SE","TE","BE"});
         divisionLabel = new JLabel("Division : ");
         divisionComboBox = new JComboBox(new Object[]{"A","B","C","D"});
-        classCourseTable = new ClassCourseTable();
+        classCourseTable = new CourseSelectionTable();
         messageLabel = new JLabel();
         createClassButton = new JButton("Create Class");
 

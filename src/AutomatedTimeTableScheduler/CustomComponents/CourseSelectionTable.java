@@ -3,16 +3,14 @@ package AutomatedTimeTableScheduler.CustomComponents;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.sql.ResultSet;
 
-public class ClassCourseTable {
+public class CourseSelectionTable {
     private final DefaultTableModel tableModel;
     private final JTable table;
     private final JScrollPane scrollPane;
 
-    public ClassCourseTable() {
+    public CourseSelectionTable() {
         String[] columns = {"Course Code", "Course Name", "Session Duration", "Session/Week","Selection"};
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel) {
