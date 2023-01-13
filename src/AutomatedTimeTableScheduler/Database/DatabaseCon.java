@@ -144,10 +144,22 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
     }
 
-    public void addClassroom(String roomName) throws Exception {
+    public void addClassroom(String roomName,ArrayList<String> courseCodeList) throws Exception {
         PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO room(room_name) VALUES(?);");
         preparedStatement.setString(1,roomName);
         preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("SELECT LAST_INSERT_ID()");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        int roomId = resultSet.getInt(1);
+
+        preparedStatement = db.prepareStatement("INSERT INTO course_rooms VALUES(?,?);");
+        preparedStatement.setInt(2,roomId);
+        for( int i = 0; i < courseCodeList.size(); i++){
+            preparedStatement.setString(1,courseCodeList.get(i));
+            preparedStatement.executeUpdate();
+        }
     }
 
     public ResultSet getClassroomList() throws Exception {
