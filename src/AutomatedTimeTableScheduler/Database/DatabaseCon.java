@@ -4,6 +4,8 @@ import AutomatedTimeTableScheduler.Static.Constant;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 
 public class DatabaseCon {
 
@@ -126,11 +128,30 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
     }
 
-    public void addTeacher(String firstname,String lastname) throws Exception {
+    public void addTeacher(String firstname, String lastname, Dictionary<String,Integer> preferenceList) throws Exception {
+        //Inserting Teacher Details
         PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO teacher(firstname,lastname) VALUES(?,?);");
         preparedStatement.setString(1,firstname);
         preparedStatement.setString(2,lastname);
         preparedStatement.executeUpdate();
+
+        //Getting Teacher Id
+        preparedStatement = db.prepareStatement("SELECT LAST_INSERT_ID();");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        int teacherId = resultSet.getInt(1);
+
+        //Inserting Preferences
+        preparedStatement = db.prepareStatement("INSERT INTO course_teacher VALUES(?,?,?);");
+        preparedStatement.setInt(2,teacherId);
+
+        Enumeration<String> courseCodeList = preferenceList.keys();
+        for( int i = 0; i < preferenceList.size(); i++){
+            String courseCode = courseCodeList.nextElement();
+            preparedStatement.setString(1,courseCode);
+            preparedStatement.setInt(3,preferenceList.get(courseCode));
+            preparedStatement.executeUpdate();
+        }
     }
 
     public ResultSet getTeacherList() throws Exception {

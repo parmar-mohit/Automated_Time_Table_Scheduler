@@ -36,7 +36,7 @@ public class ClassroomPanel extends JPanel implements ActionListener {
         panelNameLabel.setFont(new Font("SansSerif", Font.PLAIN,20));
         addClassroomButton.setBackground(Constant.BUTTON_BACKGROUND);
         classroomListPanel.setLayout(new GridBagLayout());
-        scrollPane.setPreferredSize(new Dimension(1000,430));
+        scrollPane.setPreferredSize(new Dimension(1000,550));
 
         //Adding Listeners
         addClassroomButton.addActionListener(this);

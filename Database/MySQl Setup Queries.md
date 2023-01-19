@@ -68,6 +68,7 @@ CREATE TABLE course_rooms(
 CREATE TABLE course_teacher(
         course_code VARCHAR(50),
         teacher_id INT,
+        preference INT,
         PRIMARY KEY(course_code,teacher_id),
         FOREIGN KEY(course_code) REFERENCES course(course_code) ON DELETE CASCADE,
         FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE     
