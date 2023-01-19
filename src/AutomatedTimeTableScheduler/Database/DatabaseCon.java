@@ -235,4 +235,20 @@ public class DatabaseCon {
 
         return slotCount;
     }
+
+    public int getClassroomCountForCourse(String courseCode) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM course_rooms WHERE course_code = ?;");
+        preparedStatement.setString(1,courseCode);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public boolean roomNameExist(String roomName) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM room WHERE room_name = ?);");
+        preparedStatement.setString(1,roomName);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
 }

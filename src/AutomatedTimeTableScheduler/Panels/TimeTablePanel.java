@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class TimeTablePanel extends JPanel implements ActionListener {
@@ -52,8 +53,8 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
         //Adding Member to Panel
         add(timeLabel,Constraint.setPosition(0,0));
-        add(classLabel,Constraint.setPosition(0,1));
-        add(courseLabel,Constraint.setPosition(0,2));
+        add(courseLabel,Constraint.setPosition(0,1));
+        add(classLabel,Constraint.setPosition(0,2));
         add(teacherLabel,Constraint.setPosition(0,3));
         add(classroomLabel,Constraint.setPosition(0,4));
         add(statusLabel, Constraint.setPosition(0,5));
@@ -105,6 +106,16 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 classroomLabel.setText("Classroom : There should be Minimum 2 Teacher");
                 status = false;
             }
+
+            ResultSet courseList = db.getCourseList();
+            while( courseList.next() ){
+                int classroomCount = db.getClassroomCountForCourse(courseList.getString(1));
+                if( classroomCount == 0 ){
+                    classroomLabel.setText("No Classroom Assigned for Course Code : "+courseList.getString(1));
+                    status = false;
+                }
+            }
+
         }catch(Exception e){
             System.out.println(e);
         }finally {

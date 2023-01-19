@@ -74,6 +74,12 @@ public class AddClassroomPanel extends JPanel implements ActionListener {
 
         try{
             db = new DatabaseCon();
+
+            if( db.roomNameExist(roomName) ){
+                messageLabel.setText("Room with same name already exist");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
             db.addClassroom(roomName,courseCodeList);
 
             messageLabel.setText("Classroom Added");
