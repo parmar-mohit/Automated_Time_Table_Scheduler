@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 
 public class TimeTablePanel extends JPanel implements ActionListener {
 
@@ -94,8 +93,8 @@ public class TimeTablePanel extends JPanel implements ActionListener {
             //Checking for teacher
             if( db.getTeacherCount() >= 2 ){
                 teacherLabel.setText("Teacher : All Ok");
-            }else{
-                teacherLabel.setText("Teacher : There should be Minimum 2 Teacher");
+            }else if( (db.getTotalWeeklyLoad() / db.getTeacherCount() ) >= 18 ){
+                teacherLabel.setText("There are not enough teachers to handle workload. Teacher workload may exceed 18 hours/week");
                 status = false;
             }
 
@@ -137,10 +136,17 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         if( e.getSource() == generateTimeTableButton ){
             try {
                 statusLabel.setText("Generating Time Table");
+                revalidate();
+                repaint();
 
                 //Creating TimeTable Directory
                 File file = new File("TimeTable");
                 file.mkdir();
+
+                //Creating WorkLoad Sheet
+                CreatePDF.createWorkLoadSheet();
+
+                //Creating Master Time Table
                 CreatePDF.createMasterTimeTable();
 
                 //Creating Class Time Table
@@ -158,7 +164,9 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 file.mkdir();
                 CreatePDF.createTeacherTimeTable();
 
-                statusLabel.setText("Time Table Generated");  
+                statusLabel.setText("Time Table Generated");
+                revalidate();
+                repaint();
             }catch(Exception excp){
                 System.out.println(excp);
             }

@@ -251,4 +251,56 @@ public class DatabaseCon {
         resultSet.next();
         return resultSet.getBoolean(1);
     }
+
+    public int getTotalWeeklyLoad() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM class;");
+        ResultSet classResultSet = preparedStatement.executeQuery();
+
+        int load = 0;
+        while( classResultSet.next() ){
+            preparedStatement = db.prepareStatement("SELECT * FROM class_course WHERE class_id = ?;");
+            preparedStatement.setInt(1,classResultSet.getInt("class_id"));
+            ResultSet classCourseResultSet = preparedStatement.executeQuery();
+
+            while( classCourseResultSet.next() ){
+                preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code = ?;");
+                preparedStatement.setString(1,classCourseResultSet.getString("course_code"));
+                ResultSet courseResultSet = preparedStatement.executeQuery();
+
+                while( courseResultSet.next() ){
+                    load += ( courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week") );
+                }
+            }
+        }
+
+        return load;
+    }
+
+    public ResultSet getDistinctYearList() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT DISTINCT(year) FROM class;");
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getDistinctCoursListForYear(int year) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code IN ( SELECT course_code FROM class_course WHERE class_id IN (SELECT class_id FROM class WHERE year = ?) );");
+        preparedStatement.setInt(1,year);
+        return preparedStatement.executeQuery();
+    }
+
+    public int getDistinctCourseCountForYear(int year) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(DISTINCT(course_code)) FROM class_course WHERE class_id IN (SELECT class_id FROM class WHERE year = ?);");
+        preparedStatement.setInt(1,year);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public int getDivisionCountForCourseYear(String courseCode, int year) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM class WHERE year = ? AND class_id IN ( SELECT class_id FROM class_course WHERE course_code = ?);");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,courseCode);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
 }

@@ -2,6 +2,7 @@ package AutomatedTimeTableScheduler.Static;
 
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -11,8 +12,129 @@ import java.sql.ResultSet;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class CreatePDF {
+
+    public static void createWorkLoadSheet() throws Exception{
+        Document document = new Document(PageSize.A4);
+        PdfWriter.getInstance(document,new FileOutputStream("TimeTable/WorkLoad.pdf"));
+        document.open();
+
+        //Connecting to Database
+        DatabaseCon db = new DatabaseCon();
+
+        //Writing Header
+        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN,25.0f,Font.BOLD,BaseColor.BLACK);
+        Phrase titlePhrase = new Phrase("WorkLoad",titleFont);
+        Paragraph title = new Paragraph(titlePhrase);
+        title.setAlignment(Element.ALIGN_CENTER);
+        document.add(title);
+        document.add(new Paragraph("\n\n"));
+
+        PdfPTable table = new PdfPTable(7);
+        addWorkLoadTableHeader(table);
+
+        int totalLoad = 0;
+
+        ResultSet yearResultSet = db.getDistinctYearList();
+        while( yearResultSet.next() ){
+            int year  = yearResultSet.getInt(1);
+
+            String yearString;
+            switch(year){
+                case 1:
+                    yearString = "FE";
+                    break;
+
+                case 2:
+                    yearString = "SE";
+                    break;
+
+                case 3:
+                    yearString = "TE";
+                    break;
+
+                case 4:
+                    yearString = "BE";
+                    break;
+
+                default:
+                    yearString = "Year";
+            }
+            PdfPCell cell = new PdfPCell(new Phrase(yearString));
+            cell.setRowspan(db.getDistinctCourseCountForYear(year)+1);
+            table.addCell(cell);
+
+            int yearLoad = 0;
+
+            ResultSet courseResultSet = db.getDistinctCoursListForYear(year);
+            while( courseResultSet.next() ){
+                cell = new PdfPCell(new Phrase(courseResultSet.getString("course_code")));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(courseResultSet.getString("course_name")));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(((int)(courseResultSet.getInt("session_duration")/60))+""));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(courseResultSet.getInt("session_per_week")+""));
+                table.addCell(cell);
+
+                int divisionCount = db.getDivisionCountForCourseYear(courseResultSet.getString("course_code"),year);
+                cell = new PdfPCell(new Phrase(divisionCount+""));
+                table.addCell(cell);
+
+                int courseLoad = ((int)(courseResultSet.getInt("session_duration")/60)) * courseResultSet.getInt("session_per_week") * divisionCount;
+                cell = new PdfPCell(new Phrase(courseLoad+""));
+                table.addCell(cell);
+
+                yearLoad += courseLoad;
+            }
+
+            Phrase yearLoadPhrase = new Phrase("Year Load",new Font(Font.FontFamily.COURIER,12.0f,Font.BOLD,BaseColor.BLACK));
+            PdfPCell yearLoadCell = new PdfPCell(yearLoadPhrase);
+            yearLoadCell.setColspan(5);
+            table.addCell(yearLoadCell);
+
+            yearLoadPhrase = new Phrase(yearLoad+"",new Font(Font.FontFamily.COURIER,12.0f,Font.BOLD,BaseColor.BLACK));
+            yearLoadCell = new PdfPCell(yearLoadPhrase);
+            table.addCell(yearLoadCell);
+
+            PdfPCell blankCell = new PdfPCell(new Phrase(" "));
+            blankCell.setColspan(7);
+            table.addCell(blankCell);
+
+            totalLoad += yearLoad;
+        }
+
+        Phrase totalLoadPhrase = new Phrase("Total Load",new Font(Font.FontFamily.TIMES_ROMAN,15.0f,Font.BOLD,BaseColor.BLACK));
+        PdfPCell totalLoadCell = new PdfPCell(totalLoadPhrase);
+        totalLoadCell.setColspan(6);
+        table.addCell(totalLoadCell);
+
+
+        totalLoadCell = new PdfPCell(new Phrase(totalLoad+"",new Font(Font.FontFamily.TIMES_ROMAN,15.0f,Font.BOLD,BaseColor.BLACK)));
+        totalLoadCell.setColspan(1);
+        table.addCell(totalLoadCell);
+
+        //Adding table to Document
+        document.add(table);
+
+        //Close Document
+        document.close();
+    }
+
+    private static void addWorkLoadTableHeader(PdfPTable table){
+        Stream.of("Year", "Course Code", "Course Name","Session Duration","Session/Week","Division Count","Course Load")
+                .forEach(columnTitle -> {
+                    PdfPCell header = new PdfPCell();
+                    header.setBackgroundColor(new BaseColor(66, 135, 245));
+                    header.setPhrase(new Phrase(columnTitle));
+                    table.addCell(header);
+                });
+    }
 
     public static void createMasterTimeTable() throws Exception {
         Document document = new Document(PageSize.A4.rotate());
