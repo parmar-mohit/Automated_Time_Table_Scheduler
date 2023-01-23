@@ -303,4 +303,12 @@ public class DatabaseCon {
         resultSet.next();
         return resultSet.getInt(1);
     }
+
+    public int getCourseCountForClass(int classId) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM class WHERE class_id = ?");
+        preparedStatement.setInt(1,classId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
 }

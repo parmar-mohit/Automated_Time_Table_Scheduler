@@ -24,7 +24,7 @@ public class CourseCardPanel extends JPanel implements ActionListener {
         //Initialising Member Variables
         courseCodeLabel = new JLabel("Course Code : "+courseCode);
         courseNameLabel = new JLabel("Course Name : "+courseName);
-        sessionDurationLabel = new JLabel("Session Duration (minutes) : "+sessionDuration);
+        sessionDurationLabel = new JLabel("Session Duration (Hours) : "+sessionDuration);
         sessionPerWeekLabel = new JLabel("Session/Week : "+sessionPerWeek);
         deleteCourseButton = new JButton("Delete");
 

@@ -76,7 +76,7 @@ public class CreatePDF {
                 cell = new PdfPCell(new Phrase(courseResultSet.getString("course_name")));
                 table.addCell(cell);
 
-                cell = new PdfPCell(new Phrase(((int)(courseResultSet.getInt("session_duration")/60))+""));
+                cell = new PdfPCell(new Phrase(courseResultSet.getInt("session_duration")+""));
                 table.addCell(cell);
 
                 cell = new PdfPCell(new Phrase(courseResultSet.getInt("session_per_week")+""));
@@ -86,7 +86,7 @@ public class CreatePDF {
                 cell = new PdfPCell(new Phrase(divisionCount+""));
                 table.addCell(cell);
 
-                int courseLoad = ((int)(courseResultSet.getInt("session_duration")/60)) * courseResultSet.getInt("session_per_week") * divisionCount;
+                int courseLoad = courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week") * divisionCount;
                 cell = new PdfPCell(new Phrase(courseLoad+""));
                 table.addCell(cell);
 

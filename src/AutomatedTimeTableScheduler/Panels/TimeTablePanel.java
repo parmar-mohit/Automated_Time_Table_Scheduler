@@ -77,7 +77,14 @@ public class TimeTablePanel extends JPanel implements ActionListener {
             //Checking for Class
             if( db.getClassCount() >= 2  ){
                 classLabel.setText("Class : All Ok");
-            }else{
+            }else {
+                ResultSet classResultSet = db.getClassList();
+                while( classResultSet.next() ){
+                    if( db.getCourseCountForClass(classResultSet.getInt("class_id")) < 5 ){
+                        classLabel.setText("Less than Five courses are assigned for Class "+classResultSet.getInt("year")+ " "+classResultSet.getString("division"));
+                        status = false;
+                    }
+                }
                 classLabel.setText("Class : There should be minimum 2 Classes");
                 status = false;
             }
