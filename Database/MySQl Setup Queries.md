@@ -74,17 +74,24 @@ CREATE TABLE course_teacher(
         FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE     
 );
 
+CREATE TABLE time_slots(
+        time_id INT PRIMARY KEY AUTO_INCREMENT,
+        start_time TIME,
+        end_time TIME,
+        day VARCHAR(10)
+);
+
 CREATE TABLE time_table(
     class_id INT,
     course_code VARCHAR(50),
     room_id INT,
     teacher_id INT,
-    start_time TIME,
-    end_time TIME,
+    time_id INT,
     FOREIGN KEY(class_id) REFERENCES class(class_id) ON DELETE CASCADE,
     FOREIGN KEY(course_code) REFERENCES course(course_code) ON DELETE CASCADE,
     FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE CASCADE,
-    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE
+    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE,
+    FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE
 );
 ```
 

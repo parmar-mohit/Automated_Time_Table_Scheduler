@@ -1,6 +1,10 @@
 package AutomatedTimeTableScheduler.Database;
 
 import AutomatedTimeTableScheduler.Static.Constant;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,6 +41,30 @@ public class DatabaseCon {
         preparedStatement.setTime(3,breakStartTime);
         preparedStatement.setTime(4,breakEndTime);
         preparedStatement.executeUpdate();
+
+        //Inserting Time Slots
+        preparedStatement = db.prepareStatement("DELETE FROM time_slots");
+        preparedStatement.executeUpdate();
+
+        Time currentTime = startTime;
+        while( currentTime.before(endTime)){
+            if( currentTime.equals(breakStartTime) ){
+                currentTime = breakEndTime;
+                continue;
+            }
+
+            preparedStatement = db.prepareStatement("INSERT INTO time_slots(start_time,end_time,day) VALUES(?,?,?);");
+            preparedStatement.setTime(1,currentTime);
+            preparedStatement.setTime(2,new Time(currentTime.getTime()+3600000));
+
+            for( int i = 0; i < Constant.WEEK.length; i++){
+                preparedStatement.setString(3,Constant.WEEK[i]);
+                preparedStatement.executeUpdate();
+            }
+
+            //Increment Time by 1 hour
+            currentTime = new Time(currentTime.getTime()+3600000);  //3600000 ms = 1 hr
+        }
     }
 
     public ArrayList<Time> getTimeInfo() throws Exception {
