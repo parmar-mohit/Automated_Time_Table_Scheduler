@@ -1,10 +1,6 @@
 package AutomatedTimeTableScheduler.Database;
 
 import AutomatedTimeTableScheduler.Static.Constant;
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.Element;
-import com.itextpdf.text.Phrase;
-import com.itextpdf.text.pdf.PdfPCell;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -309,8 +305,14 @@ public class DatabaseCon {
         return preparedStatement.executeQuery();
     }
 
-    public ResultSet getDistinctCoursListForYear(int year) throws Exception{
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code IN ( SELECT course_code FROM class_course WHERE class_id IN (SELECT class_id FROM class WHERE year = ?) );");
+    public ResultSet getDistinctLectureCourseListForYear(int year) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code IN ( SELECT course_code FROM class_course WHERE class_id IN (SELECT class_id FROM class WHERE year = ?) ) AND session_duration = 1;");
+        preparedStatement.setInt(1,year);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getDistinctPracticalCourseListForYear(int year) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code IN ( SELECT course_code FROM class_course WHERE class_id IN (SELECT class_id FROM class WHERE year = ?) ) AND session_duration = 2;");
         preparedStatement.setInt(1,year);
         return preparedStatement.executeQuery();
     }
@@ -338,5 +340,15 @@ public class DatabaseCon {
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
         return resultSet.getInt(1);
+    }
+
+    public String getTeacherPreferenceValidation() throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course WHERE course_code NOT IN (SELECT DISTINCT(course_code) FROM course_teacher);");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if( resultSet.next() ){
+            return resultSet.getString("course_code");
+        }
+
+        return null;
     }
 }

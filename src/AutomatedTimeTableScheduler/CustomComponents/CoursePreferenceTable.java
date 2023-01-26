@@ -115,6 +115,7 @@ public class CoursePreferenceTable implements MouseListener {
     }
 
     public void resetPreferences(){
+        preference = 1;
         for( int i = 0; i < table.getRowCount(); i++){
             table.setValueAt(null,i,4);
         }

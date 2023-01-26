@@ -12,11 +12,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.security.Key;
 
-public class CreateCoursePanel extends JPanel implements ActionListener,KeyListener {
+public class CreateCoursePanel extends JPanel implements ActionListener {
 
     private JLabel panelNameLabel,courseCodeLabel,courseNameLabel,sessionDurationLabel,sessionPerWeekLabel,messageLabel;
-    private JTextField courseCodeTextField,courseNameTextField,sessionPerWeekTextField;
-    private JComboBox sessionDurationComboBox;
+    private JTextField courseCodeTextField,courseNameTextField;
+    private JComboBox sessionDurationComboBox,sessionPerWeekComboBox;
     private JButton addCourseButton;
     private DatabaseCon db;
     public CreateCoursePanel(){
@@ -29,7 +29,7 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
         sessionDurationLabel = new JLabel("Session Duration (Hours) : ");
         sessionDurationComboBox = new JComboBox(new Object[]{1,2});
         sessionPerWeekLabel = new JLabel("Session/Week : ");
-        sessionPerWeekTextField = new JTextField(20);
+        sessionPerWeekComboBox = new JComboBox(new Object[]{1,2,3,4,5});
         messageLabel = new JLabel();
         addCourseButton = new JButton("Add Course");
 
@@ -37,7 +37,6 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
         panelNameLabel.setFont(new Font("SansSerif",Font.PLAIN,18));
 
         //Adding Listeners
-        sessionPerWeekTextField.addKeyListener(this);
         addCourseButton.addActionListener(this);
 
         //Editing Panel
@@ -53,7 +52,7 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
         add(sessionDurationLabel,Constraint.setPosition(0,3,Constraint.RIGHT));
         add(sessionDurationComboBox,Constraint.setPosition(1,3,Constraint.LEFT));
         add(sessionPerWeekLabel,Constraint.setPosition(0,4,Constraint.RIGHT));
-        add(sessionPerWeekTextField,Constraint.setPosition(1,4,Constraint.LEFT));
+        add(sessionPerWeekComboBox,Constraint.setPosition(1,4,Constraint.LEFT));
         add(messageLabel,Constraint.setPosition(0,5,2,1));
         add(addCourseButton,Constraint.setPosition(0,6,2,1));
     }
@@ -77,13 +76,7 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
         courseName = Constraint.getFormattedText(courseName);
 
         int sessionDuration = (int)sessionDurationComboBox.getSelectedItem();
-
-        if( sessionPerWeekTextField.getText().equals("") ){
-            messageLabel.setText("Enter Session/Week");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
-        int sessionPerWeek = Integer.parseInt(sessionPerWeekTextField.getText());
+        int sessionPerWeek = Integer.parseInt(sessionPerWeekComboBox.getSelectedItem()+"");
 
         try{
             db = new DatabaseCon();
@@ -102,28 +95,11 @@ public class CreateCoursePanel extends JPanel implements ActionListener,KeyListe
             courseCodeTextField.setText("");
             courseNameTextField.setText("");
             sessionDurationComboBox.setSelectedIndex(0);
-            sessionPerWeekTextField.setText("");
+            sessionPerWeekComboBox.setSelectedIndex(0);
         }catch(Exception excp){
             excp.printStackTrace();
         }finally {
             db.closeConnection();
         }
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-        if( !Character.isDigit(e.getKeyChar()) ){
-            e.consume();
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
     }
 }

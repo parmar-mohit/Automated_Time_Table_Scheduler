@@ -2,7 +2,6 @@ package AutomatedTimeTableScheduler.Static;
 
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.DocumentFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -63,35 +62,79 @@ public class CreatePDF {
                     yearString = "Year";
             }
             PdfPCell cell = new PdfPCell(new Phrase(yearString));
-            cell.setRowspan(db.getDistinctCourseCountForYear(year)+1);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+            cell.setRowspan(db.getDistinctCourseCountForYear(year)+4);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("Lectures") );
+            cell.setRowspan(1);
+            cell.setColspan(6);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
             table.addCell(cell);
 
             int yearLoad = 0;
 
-            ResultSet courseResultSet = db.getDistinctCoursListForYear(year);
-            while( courseResultSet.next() ){
-                cell = new PdfPCell(new Phrase(courseResultSet.getString("course_code")));
+            ResultSet lectureResultSet = db.getDistinctLectureCourseListForYear(year);
+            while( lectureResultSet.next() ){
+                cell = new PdfPCell(new Phrase(lectureResultSet.getString("course_code")));
                 table.addCell(cell);
 
-                cell = new PdfPCell(new Phrase(courseResultSet.getString("course_name")));
+                cell = new PdfPCell(new Phrase(lectureResultSet.getString("course_name")));
                 table.addCell(cell);
 
-                cell = new PdfPCell(new Phrase(courseResultSet.getInt("session_duration")+""));
+                cell = new PdfPCell(new Phrase(lectureResultSet.getInt("session_duration")+""));
                 table.addCell(cell);
 
-                cell = new PdfPCell(new Phrase(courseResultSet.getInt("session_per_week")+""));
+                cell = new PdfPCell(new Phrase(lectureResultSet.getInt("session_per_week")+""));
                 table.addCell(cell);
 
-                int divisionCount = db.getDivisionCountForCourseYear(courseResultSet.getString("course_code"),year);
+                int divisionCount = db.getDivisionCountForCourseYear(lectureResultSet.getString("course_code"),year);
                 cell = new PdfPCell(new Phrase(divisionCount+""));
                 table.addCell(cell);
 
-                int courseLoad = courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week") * divisionCount;
+                int courseLoad = lectureResultSet.getInt("session_duration") * lectureResultSet.getInt("session_per_week") * divisionCount;
                 cell = new PdfPCell(new Phrase(courseLoad+""));
                 table.addCell(cell);
 
                 yearLoad += courseLoad;
             }
+
+            cell = new PdfPCell(new Phrase("Practical") );
+            cell.setRowspan(1);
+            cell.setColspan(6);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+
+            ResultSet practicalResultSet = db.getDistinctPracticalCourseListForYear(year);
+            while( practicalResultSet.next() ){
+                cell = new PdfPCell(new Phrase(practicalResultSet.getString("course_code")));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(practicalResultSet.getString("course_name")));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(practicalResultSet.getInt("session_duration")+""));
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(practicalResultSet.getInt("session_per_week")+""));
+                table.addCell(cell);
+
+                int divisionCount = db.getDivisionCountForCourseYear(practicalResultSet.getString("course_code"),year);
+                cell = new PdfPCell(new Phrase(divisionCount+""));
+                table.addCell(cell);
+
+                int courseLoad = ( practicalResultSet.getInt("session_duration") * 4 ) * practicalResultSet.getInt("session_per_week") * divisionCount;
+                cell = new PdfPCell(new Phrase(courseLoad+""));
+                table.addCell(cell);
+
+                yearLoad += courseLoad;
+            }
+
+            cell = new PdfPCell(new Phrase(" ") );
+            cell.setRowspan(1);
+            cell.setColspan(6);
+            table.addCell(cell);
 
             Phrase yearLoadPhrase = new Phrase("Year Load",new Font(Font.FontFamily.COURIER,12.0f,Font.BOLD,BaseColor.BLACK));
             PdfPCell yearLoadCell = new PdfPCell(yearLoadPhrase);

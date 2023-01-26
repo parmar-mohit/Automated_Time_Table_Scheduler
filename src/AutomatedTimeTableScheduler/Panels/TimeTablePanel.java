@@ -100,8 +100,13 @@ public class TimeTablePanel extends JPanel implements ActionListener {
             //Checking for teacher
             if( db.getTeacherCount() >= 2 ){
                 teacherLabel.setText("Teacher : All Ok");
-            }else if( (db.getTotalWeeklyLoad() / db.getTeacherCount() ) >= 18 ){
+            }
+            if( (db.getTotalWeeklyLoad() / db.getTeacherCount() ) >= 18 ){
                 teacherLabel.setText("There are not enough teachers to handle workload. Teacher workload may exceed 18 hours/week");
+                status = false;
+            }
+            if( db.getTeacherPreferenceValidation() != null ){
+                teacherLabel.setText("Teacher Preference not Selected for Course Code : " +db.getTeacherPreferenceValidation());
                 status = false;
             }
 
