@@ -1,4 +1,4 @@
-package AutomatedTimeTableScheduler.CreatePanels;
+package AutomatedTimeTableScheduler.Frames;
 
 import AutomatedTimeTableScheduler.CustomComponents.CourseSelectionTable;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
@@ -11,22 +11,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class AddClassroomPanel extends JPanel implements ActionListener {
-
+public class UpdateClassroomFrame extends JFrame implements ActionListener {
     private JLabel panelNameLabel,roomNameLabel,messageLabel;
     private JTextField roomNameTextField;
     private CourseSelectionTable courseSelectionTable;
     private JButton addClassroomButton;
     private DatabaseCon db;
+    private int roomId;
 
-    public AddClassroomPanel(){
+    public UpdateClassroomFrame(String roomName,int roomId){
+        this.roomId = roomId;
         //Initialising Member Variables
-        panelNameLabel = new JLabel("Enter Classroom Details");
+        panelNameLabel = new JLabel("Update Classroom");
         roomNameLabel = new JLabel("Room Name : ");
-        roomNameTextField = new JTextField(20);
+        roomNameTextField = new JTextField(roomName,20);
         courseSelectionTable = new CourseSelectionTable();
         messageLabel = new JLabel();
-        addClassroomButton = new JButton("Add Classroom");
+        addClassroomButton = new JButton("Update Classroom");
 
         //Editing Member Variables
         panelNameLabel.setFont(new Font("SansSerif",Font.PLAIN,18));
@@ -38,8 +39,13 @@ public class AddClassroomPanel extends JPanel implements ActionListener {
         fillTable();
 
         //Editing Panel
+        setTitle(Constant.APP_NAME);
+        setSize(Constant.SCREEN_SIZE);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
-        setBackground(Constant.PANEL_BACKGROUND);
+        getContentPane().setBackground(Constant.FRAME_BACKGROUND);
+        setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         //Adding Member to Panel
         add(panelNameLabel, Constraint.setPosition(0,0,2,1));
@@ -74,20 +80,10 @@ public class AddClassroomPanel extends JPanel implements ActionListener {
 
         try{
             db = new DatabaseCon();
+            db.updateClassroom(roomId,roomName,courseCodeList);
 
-            if( db.roomNameExist(roomName) ){
-                messageLabel.setText("Room with same name already exist");
-                Constraint.labelDeleteAfterTime(messageLabel);
-                return;
-            }
-            db.addClassroom(roomName,courseCodeList);
-
-            messageLabel.setText("Classroom Added");
+            messageLabel.setText("Classroom Updated");
             Constraint.labelDeleteAfterTime(messageLabel);
-
-            //Clearing input fields
-            roomNameTextField.setText("");
-            courseSelectionTable.reset();
         }catch(Exception excp){
             excp.printStackTrace();
         }finally {
@@ -99,6 +95,7 @@ public class AddClassroomPanel extends JPanel implements ActionListener {
         try{
             db = new DatabaseCon();
             courseSelectionTable.setCourseList(db.getCourseList());
+            courseSelectionTable.setSelection(db.getCourseCodeListForRoom(roomId));
         }catch (Exception e){
             e.printStackTrace();
         }

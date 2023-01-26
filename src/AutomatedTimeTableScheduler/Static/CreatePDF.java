@@ -3,6 +3,7 @@ package AutomatedTimeTableScheduler.Static;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPHeaderCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
@@ -31,7 +32,9 @@ public class CreatePDF {
         document.add(title);
         document.add(new Paragraph("\n\n"));
 
-        PdfPTable table = new PdfPTable(7);
+        PdfPTable table = new PdfPTable(new float[]{0.05f,0.13f,0.47f,0.09f,0.08f,0.08f,0.09f});
+        table.setWidthPercentage(100);
+//        PdfPTable table = new PdfPTable(7);
         addWorkLoadTableHeader(table);
 
         int totalLoad = 0;
@@ -174,7 +177,7 @@ public class CreatePDF {
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(new BaseColor(66, 135, 245));
-                    header.setPhrase(new Phrase(columnTitle));
+                    header.setPhrase(new Phrase(columnTitle,new Font(Font.FontFamily.TIMES_ROMAN,11.0f,Font.NORMAL,BaseColor.BLACK)));
                     table.addCell(header);
                 });
     }

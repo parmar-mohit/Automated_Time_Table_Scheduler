@@ -6,6 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class DatabaseCon {
 
@@ -39,27 +40,32 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
 
         //Inserting Time Slots
-        preparedStatement = db.prepareStatement("DELETE FROM time_slots");
+        preparedStatement = db.prepareStatement("DELETE FROM time_slots;");
         preparedStatement.executeUpdate();
 
-        Time currentTime = startTime;
-        while( currentTime.before(endTime)){
-            if( currentTime.equals(breakStartTime) ){
-                currentTime = breakEndTime;
-                continue;
-            }
+        int timeId = 1;
 
-            preparedStatement = db.prepareStatement("INSERT INTO time_slots(start_time,end_time,day) VALUES(?,?,?);");
-            preparedStatement.setTime(1,currentTime);
-            preparedStatement.setTime(2,new Time(currentTime.getTime()+3600000));
+        for( int i = 0; i < Constant.WEEK.length; i++ ) {
+            Time currentTime = startTime;
+            while (currentTime.before(endTime)) {
+                if (currentTime.equals(breakStartTime)) {
+                    currentTime = breakEndTime;
+                    timeId++;
+                    continue;
+                }
 
-            for( int i = 0; i < Constant.WEEK.length; i++){
-                preparedStatement.setString(3,Constant.WEEK[i]);
+                preparedStatement = db.prepareStatement("INSERT INTO time_slots VALUES(?,?,?,?);");
+                preparedStatement.setInt(1, timeId);
+                preparedStatement.setTime(2, currentTime);
+                preparedStatement.setTime(3, new Time(currentTime.getTime() + 3600000));
+                preparedStatement.setString(4,Constant.WEEK[i]);
                 preparedStatement.executeUpdate();
-            }
 
-            //Increment Time by 1 hour
-            currentTime = new Time(currentTime.getTime()+3600000);  //3600000 ms = 1 hr
+                //Increment Time by 1 hour
+                currentTime = new Time(currentTime.getTime() + 3600000);  //3600000 ms = 1 hr
+                timeId++;
+            }
+            timeId++;
         }
     }
 
@@ -142,7 +148,7 @@ public class DatabaseCon {
     }
 
     public ResultSet getCourseList() throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course;");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course ORDER BY course_code;");
         return preparedStatement.executeQuery();
     }
 
@@ -179,7 +185,7 @@ public class DatabaseCon {
     }
 
     public ResultSet getTeacherList() throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM teacher;");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM teacher ORDER BY firstname,lastname;");
         return preparedStatement.executeQuery();
     }
 
@@ -208,7 +214,7 @@ public class DatabaseCon {
     }
 
     public ResultSet getClassroomList() throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM room");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM room ORDER BY room_name;");
         return preparedStatement.executeQuery();
     }
 
@@ -292,7 +298,11 @@ public class DatabaseCon {
                 ResultSet courseResultSet = preparedStatement.executeQuery();
 
                 while( courseResultSet.next() ){
-                    load += ( courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week") );
+                    if( courseResultSet.getInt("session_duration") == 1 ) {
+                        load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week"));
+                    }else{
+                        load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week")) * 4;  //Mutliplied by 4 for 4 batches
+                    }
                 }
             }
         }
@@ -392,6 +402,75 @@ public class DatabaseCon {
         preparedStatement.setInt(1,classId);
         for( int i = 0; i < courseCodeList.size(); i++){
             preparedStatement.setString(2,courseCodeList.get(i));
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public Dictionary<String,Integer> getTeacherCoursePreferenceList(int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM course_teacher WHERE teacher_id = ?;");
+        preparedStatement.setInt(1,teacherId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+
+
+        Dictionary<String,Integer> preferenceList = new Hashtable<>();
+        while( resultSet.next() ){
+            preferenceList.put(resultSet.getString("course_code"),resultSet.getInt("preference"));
+        }
+
+        return preferenceList;
+    }
+
+    public void updateTeacher(int teacherId,String firstname,String lastname,Dictionary<String,Integer> preferenceList) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("UPDATE teacher SET firstname = ?,lastname = ? WHERE teacher_id = ?;");
+        preparedStatement.setString(1,firstname);
+        preparedStatement.setString(2,lastname);
+        preparedStatement.setInt(3,teacherId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("DELETE FROM course_teacher WHERE teacher_id = ?;");
+        preparedStatement.setInt(1,teacherId);
+        preparedStatement.executeUpdate();
+
+        //Inserting Preferences
+        preparedStatement = db.prepareStatement("INSERT INTO course_teacher VALUES(?,?,?);");
+        preparedStatement.setInt(2,teacherId);
+
+        Enumeration<String> courseCodeList = preferenceList.keys();
+        for( int i = 0; i < preferenceList.size(); i++){
+            String courseCode = courseCodeList.nextElement();
+            preparedStatement.setString(1,courseCode);
+            preparedStatement.setInt(3,preferenceList.get(courseCode));
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public ArrayList<String> getCourseCodeListForRoom(int roomId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course_code FROM course_rooms WHERE room_id = ?;");
+        preparedStatement.setInt(1,roomId);
+        ResultSet resultSet =  preparedStatement.executeQuery();
+
+        ArrayList<String> courseCodeList = new ArrayList<>();
+        while( resultSet.next() ){
+            courseCodeList.add(resultSet.getString(1));
+        }
+
+        return courseCodeList;
+    }
+
+    public void updateClassroom(int roomId,String roomName,ArrayList<String> courseCodeList) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("UPDATE room SET room_name  = ? WHERE room_id = ?;");
+        preparedStatement.setString(1,roomName);
+        preparedStatement.setInt(2,roomId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("DELETE FROM course_rooms WHERE room_id = ?;");
+        preparedStatement.setInt(1,roomId);
+        preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("INSERT INTO course_rooms VALUES(?,?);");
+        preparedStatement.setInt(2,roomId);
+        for( int i = 0; i < courseCodeList.size(); i++){
+            preparedStatement.setString(1,courseCodeList.get(i));
             preparedStatement.executeUpdate();
         }
     }

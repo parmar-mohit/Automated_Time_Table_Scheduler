@@ -75,7 +75,7 @@ CREATE TABLE course_teacher(
 );
 
 CREATE TABLE time_slots(
-        time_id INT PRIMARY KEY AUTO_INCREMENT,
+        time_id INT PRIMARY KEY,
         start_time TIME,
         end_time TIME,
         day VARCHAR(10)

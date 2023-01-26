@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.ResultSet;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class CoursePreferenceTable implements MouseListener {
@@ -112,6 +113,20 @@ public class CoursePreferenceTable implements MouseListener {
         }
 
         return preferenceList;
+    }
+
+    public void setPreference(Dictionary<String,Integer> preferenceList){
+        Enumeration<String> courseCodeList = preferenceList.keys();
+        for( int i = 0; i < preferenceList.size(); i++){
+            String courseCode = courseCodeList.nextElement();
+            for( int j = 0; j < table.getRowCount(); j++ ){
+                if( table.getValueAt(j,0).equals(courseCode) ){
+                    table.setValueAt(preferenceList.get(courseCode),j,4);
+                    break;
+                }
+            }
+        }
+        preference = preferenceList.size()+1;
     }
 
     public void resetPreferences(){

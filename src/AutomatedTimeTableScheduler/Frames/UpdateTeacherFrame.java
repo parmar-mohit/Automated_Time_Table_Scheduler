@@ -1,4 +1,4 @@
-package AutomatedTimeTableScheduler.CreatePanels;
+package AutomatedTimeTableScheduler.Frames;
 
 import AutomatedTimeTableScheduler.CustomComponents.CoursePreferenceTable;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
@@ -13,25 +13,27 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Dictionary;
 
-public class AddTeacherPanel extends JPanel implements ActionListener, KeyListener {
+public class UpdateTeacherFrame extends JFrame implements ActionListener, KeyListener {
 
     private JLabel panelNameLabel,firstnameLabel,lastnameLabel,messageLabel;
     private JTextField firstnameTextField,lastnameTextField;
 
     private CoursePreferenceTable preferenceTable;
-    private JButton addTeacherButton;
+    private JButton updateTeacherButton;
     private DatabaseCon db;
+    private int teacherId;
 
-    public AddTeacherPanel(){
+    public UpdateTeacherFrame(String firstname,String lastname,int teacherId){
+        this.teacherId = teacherId;
         //Initialising Member Variables
-        panelNameLabel = new JLabel("Enter Teacher Details");
+        panelNameLabel = new JLabel("Update Teacher Details");
         firstnameLabel = new JLabel("Teacher's Firstname : ");
-        firstnameTextField = new JTextField(20);
+        firstnameTextField = new JTextField(firstname,20);
         lastnameLabel = new JLabel("Teacher Lastname : ");
-        lastnameTextField = new JTextField(20);
+        lastnameTextField = new JTextField(lastname,20);
         preferenceTable = new CoursePreferenceTable();
         messageLabel = new JLabel();
-        addTeacherButton = new JButton("Add Teacher");
+        updateTeacherButton = new JButton("Update Teacher");
 
         //Editing Member Variables
         panelNameLabel.setFont(new Font("SansSerif",Font.PLAIN,18));
@@ -39,14 +41,19 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         //Adding Listeners
         firstnameTextField.addKeyListener(this);
         lastnameTextField.addKeyListener(this);
-        addTeacherButton.addActionListener(this);
+        updateTeacherButton.addActionListener(this);
 
         //Filling Table
         fillPreferenceTable();
 
         //Editing Panel
+        setTitle(Constant.APP_NAME);
+        setSize(Constant.SCREEN_SIZE);
+        setVisible(true);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new GridBagLayout());
-        setBackground(Constant.PANEL_BACKGROUND);
+        getContentPane().setBackground(Constant.FRAME_BACKGROUND);
+        setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 
         //Adding Member to Panel
         add(panelNameLabel, Constraint.setPosition(0,0,2,1));
@@ -56,7 +63,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         add(lastnameTextField,Constraint.setPosition(1,2,Constraint.LEFT));
         add(preferenceTable.getScrollPane(),Constraint.setPosition(0,3,2,1));
         add(messageLabel,Constraint.setPosition(0,4,2,1));
-        add(addTeacherButton,Constraint.setPosition(0,5,2,1));
+        add(updateTeacherButton,Constraint.setPosition(0,5,2,1));
     }
 
     @Override
@@ -86,15 +93,10 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
 
         try{
             db = new DatabaseCon();
-            db.addTeacher(firstname,lastname,preferenceList);
+            db.updateTeacher(teacherId,firstname,lastname,preferenceList);
 
-            messageLabel.setText("Teacher Id Added");
+            messageLabel.setText("Teacher Id Updated");
             Constraint.labelDeleteAfterTime(messageLabel);
-
-            //Clearing Input Fields
-            firstnameTextField.setText("");
-            lastnameTextField.setText("");
-            preferenceTable.resetPreferences();
         }catch(Exception excp){
             excp.printStackTrace();
         }
@@ -104,6 +106,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         try{
             db = new DatabaseCon();
             preferenceTable.setCourseList(db.getCourseList());
+            preferenceTable.setPreference(db.getTeacherCoursePreferenceList(teacherId));
         }catch (Exception e){
             e.printStackTrace();
         }
