@@ -351,4 +351,13 @@ public class DatabaseCon {
 
         return null;
     }
+
+    public void updateCourse(String courseCode,String courseName,int sessionDuration,int sessionPerWeek) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("UPDATE course SET course_name = ?, session_duration = ?, session_per_week = ? WHERE course_code = ?");
+        preparedStatement.setString(1,courseName);
+        preparedStatement.setInt(2,sessionDuration);
+        preparedStatement.setInt(3,sessionPerWeek);
+        preparedStatement.setString(4,courseCode);
+        preparedStatement.executeUpdate();
+    }
 }
