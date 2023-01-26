@@ -1,6 +1,8 @@
 package AutomatedTimeTableScheduler.CardPanel;
 
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
+import AutomatedTimeTableScheduler.Frames.UpdateClassFrame;
+import AutomatedTimeTableScheduler.Frames.UpdateCourseFrame;
 import AutomatedTimeTableScheduler.Panels.ClassPanel;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
@@ -9,11 +11,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class ClassCardPanel extends JPanel implements ActionListener {
 
     private JLabel classLabel,divisionLabel;
-    private JButton deleteClassButton;
+    private JButton updateClassButton,deleteClassButton;
     private DatabaseCon db;
     private ClassPanel parentPanel;
     private int year;
@@ -44,12 +48,14 @@ public class ClassCardPanel extends JPanel implements ActionListener {
         }
         classLabel = new JLabel("Class : "+yearString);
         divisionLabel = new JLabel("Division : "+division);
+        updateClassButton = new JButton("Update");
         deleteClassButton = new JButton("Delete");
 
         //Editing Members
         deleteClassButton.setBackground(Constant.RED);
 
         //Adding Listeners
+        updateClassButton.addActionListener(this);
         deleteClassButton.addActionListener(this);
 
         //Editing Panel
@@ -58,21 +64,67 @@ public class ClassCardPanel extends JPanel implements ActionListener {
 
         //Adding Members to Panel
         add(classLabel, Constraint.setPosition(0,0));
-        add(divisionLabel,Constraint.setPosition(1,0));
-        add(deleteClassButton,Constraint.setPosition(2,0));
+        add(divisionLabel,Constraint.setPosition(0,1));
+        add(updateClassButton,Constraint.setPosition(1,0));
+        add(deleteClassButton,Constraint.setPosition(1,1));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if( e.getSource() == deleteClassButton ){
-            try{
-                db = new DatabaseCon();
-                db.deleteClass(year,division);
-                parentPanel.displayClass();
-            }catch (Exception excp){
-                System.out.println(excp);
-            }finally {
-                db.closeConnection();
+        if( e.getSource() == updateClassButton ){
+            getTopLevelAncestor().setVisible(false);
+            JFrame updateClassFrame = new UpdateClassFrame(year,division);
+            updateClassFrame.addWindowListener(new WindowListener() {
+                @Override
+                public void windowOpened(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    updateClassFrame.dispose();
+                    getTopLevelAncestor().setVisible(true);
+                    parentPanel.displayClass();
+                }
+
+                @Override
+                public void windowClosed(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowIconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowActivated(WindowEvent e) {
+
+                }
+
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+
+                }
+            });
+        }if( e.getSource() == deleteClassButton ){
+            int result = JOptionPane.showConfirmDialog(getTopLevelAncestor(),"Are you sure you want to delete Class?");
+
+            if( result == JOptionPane.YES_NO_OPTION ){
+                try{
+                    db = new DatabaseCon();
+                    db.deleteClass(year,division);
+                    parentPanel.displayClass();
+                }catch (Exception excp){
+                    System.out.println(excp);
+                }finally {
+                    db.closeConnection();
+                }
             }
         }
     }

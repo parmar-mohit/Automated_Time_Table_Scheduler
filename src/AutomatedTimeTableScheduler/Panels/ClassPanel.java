@@ -101,7 +101,7 @@ public class ClassPanel extends JPanel implements ActionListener {
             ResultSet classResultSet = db.getClassList();
             while( classResultSet.next() ){
                 ClassCardPanel classCardPanel = new ClassCardPanel(classResultSet.getInt("year"),classResultSet.getString("division"),this);
-                classCardPanel.setPreferredSize(new Dimension(950,75));
+                classCardPanel.setPreferredSize(new Dimension(950,150));
                 classListPanel.add(classCardPanel,Constraint.setPosition(0,classPanelArrayList.size()));
                 classPanelArrayList.add(classCardPanel);
                 classListPanel.revalidate();

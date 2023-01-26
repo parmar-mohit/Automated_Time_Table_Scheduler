@@ -360,4 +360,39 @@ public class DatabaseCon {
         preparedStatement.setString(4,courseCode);
         preparedStatement.executeUpdate();
     }
+
+    public ArrayList<String> getCourseCodeListForClass(int year,String division) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course_code FROM class_course WHERE class_id = (SELECT class_id FROM class WHERE year = ? and division = ?);");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        ResultSet resultSet =  preparedStatement.executeQuery();
+
+        ArrayList<String> courseCodeList = new ArrayList<>();
+        while( resultSet.next() ){
+            courseCodeList.add(resultSet.getString(1));
+        }
+
+        return courseCodeList;
+    }
+
+    public void updateClass(int year,String division,ArrayList<String> courseCodeList) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("DELETE FROM class_course WHERE class_id = (SELECT class_id FROM class WHERE year = ? AND division = ?);");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        preparedStatement.executeUpdate();
+
+        preparedStatement = db.prepareStatement("SELECT class_id FROM class WHERE year = ? AND division = ?;");
+        preparedStatement.setInt(1,year);
+        preparedStatement.setString(2,division);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        int classId = resultSet.getInt(1);
+
+        preparedStatement = db.prepareStatement("INSERT INTO class_course VALUES(?,?);");
+        preparedStatement.setInt(1,classId);
+        for( int i = 0; i < courseCodeList.size(); i++){
+            preparedStatement.setString(2,courseCodeList.get(i));
+            preparedStatement.executeUpdate();
+        }
+    }
 }

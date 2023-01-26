@@ -21,7 +21,7 @@ public class CreateClassPanel extends JPanel implements ActionListener {
 
     public CreateClassPanel(){
         //Initialising Member
-        panelNameLabel = new JLabel("Create Class");
+        panelNameLabel = new JLabel("Enter Class Details");
         classLabel = new JLabel("Class : ");
         yearComboBox = new JComboBox(new Object[]{"FE","SE","TE","BE"});
         divisionLabel = new JLabel("Division : ");

@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class CourseSelectionTable {
     private final DefaultTableModel tableModel;
@@ -62,6 +63,18 @@ public class CourseSelectionTable {
     public void reset(){
         for( int i = 0; i < table.getRowCount(); i++){
             table.setValueAt(false,i,4);
+        }
+    }
+    public void setSelection(ArrayList<String> courseCodeList){
+        while( courseCodeList.size() > 0 ){
+            String courseCode = courseCodeList.get(0);
+            for( int i = 0; i < table.getRowCount(); i++){
+                if( table.getValueAt(i,0).equals(courseCode) ){
+                    table.setValueAt(true,i,4);
+                    courseCodeList.remove(0);
+                    break;
+                }
+            }
         }
     }
 

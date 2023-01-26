@@ -101,14 +101,18 @@ public class CourseCardPanel extends JPanel implements ActionListener {
                 }
             });
         }else if( e.getSource() == deleteCourseButton ){
-            try{
-                db = new DatabaseCon();
-                db.deleteCourse(courseCode);
-                parentPanel.displayCourse();
-            }catch (Exception excp){
-                System.out.println(excp);
-            }finally {
-                db.closeConnection();
+            int result = JOptionPane.showConfirmDialog(getTopLevelAncestor(),"Are you sure you want to delete course?");
+
+            if( result == JOptionPane.YES_NO_OPTION ){
+                try{
+                    db = new DatabaseCon();
+                    db.deleteCourse(courseCode);
+                    parentPanel.displayCourse();
+                }catch (Exception excp){
+                    System.out.println(excp);
+                }finally {
+                    db.closeConnection();
+                }
             }
         }
     }
