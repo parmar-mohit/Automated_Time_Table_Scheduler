@@ -81,17 +81,25 @@ CREATE TABLE time_slots(
         day VARCHAR(10)
 );
 
+CREATE TABLE subject(
+        subject_id INT PRIMARY KEY AUTO_INCREMENT,
+        batch INT,
+        course_code VARCHAR(50),
+        class_id INT,
+        teacher_id INT,
+        CHECK(batch IN(1,2,3,4)),
+        FOREIGN KEY(course_code) REFERENCES course(course_code) ON DELETE CASCADE,
+        FOREIGN KEY(class_id) REFERENCES class(class_id) ON DELETE CASCADE,
+        FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE
+);
+
 CREATE TABLE time_table(
-    class_id INT,
-    course_code VARCHAR(50),
-    room_id INT,
-    teacher_id INT,
-    time_id INT,
-    FOREIGN KEY(class_id) REFERENCES class(class_id) ON DELETE CASCADE,
-    FOREIGN KEY(course_code) REFERENCES course(course_code) ON DELETE CASCADE,
-    FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE CASCADE,
-    FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id) ON DELETE CASCADE,
-    FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE
+        subject_id INT,
+        room_id INT,
+        time_id INT,
+        FOREIGN KEY(subject_id) REFERENCES subject(subject_id) ON DELETE CASCADE,
+        FOREIGN KEY(room_id) REFERENCES room(room_id) ON DELETE CASCADE,
+        FOREIGN KEY(time_id) REFERENCES time_slots(time_id) ON DELETE CASCADE
 );
 ```
 

@@ -7,3 +7,7 @@ out/*
 
 # Program Generated Files
 TimeTable/*
+
+# Draw.io Files
+Database/.$ER Diagram.drawio.bkp
+Database/.$Relational Model.drawio.bkp
