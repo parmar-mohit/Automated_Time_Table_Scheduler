@@ -7,6 +7,9 @@ The aim of this project is help schools,colleges, universities in thier process 
 ### Instruction to Execute Program
 First Run the MySQL Queries mentioned in [MySQL Setup Queries](./Database/MySQl%20Setup%20Queries.md) then run the following commands to execute the program successfully
 ```
+To install python requirements
+pip install -r requirement.txt
+
 To Compile Files(Location : Project Directory)
 cd src
 javac -d "../out/production/Automated_Time_Table_Scheduler" -classpath "../Jar Files/ITextPDF.jar;./" AutomatedTimeTableScheduler/Application.java

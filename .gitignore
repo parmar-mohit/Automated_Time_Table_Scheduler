@@ -1,6 +1,7 @@
 # IntelliJ files
 .idea/*
 Automated_Time_Table_Scheduler.iml
+Python/Python.iml
 
 # Output Files
 out/*
@@ -11,3 +12,4 @@ TimeTable/*
 # Draw.io Files
 Database/.$ER Diagram.drawio.bkp
 Database/.$Relational Model.drawio.bkp
+Database/.$ER Diagram.drawio.dtmp

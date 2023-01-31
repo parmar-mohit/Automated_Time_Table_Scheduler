@@ -4,11 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.Base64;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
 
 public class Constraint {
     /* This Class provides static function that can be used to
@@ -47,17 +43,50 @@ public class Constraint {
     }
 
     public static String getFormattedText(String text){
-        String words[] = text.split(" ");
-        String formattedText = new String();
+        String[] words = text.split(" ");
+        String formattedText = "";
 
         for( int i = 0; i < words.length; i++){
             if( !formattedText.equals("") ){
                 formattedText += " ";
             }
-            formattedText += Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1);
+            formattedText += Character.toUpperCase(words[i].charAt(0)) + words[i].substring(1).toLowerCase();
         }
 
         return formattedText;
+    }
+
+    public static String getClassString(int year,String division){
+        String classString;
+        switch(year){
+            case 1:
+                classString = "FE";
+                break;
+
+            case 2:
+                classString = "SE";
+                break;
+
+            case 3:
+                classString = "TE";
+                break;
+
+            case 4:
+                classString = "BE";
+                break;
+
+            default:
+                classString = "Year";
+        }
+        classString += " " + division;
+
+        return classString;
+    }
+
+    public static void deleteAllFileFromDirectory(File dir) {
+        for (File file: dir.listFiles()) {
+            file.delete();
+        }
     }
 }
 

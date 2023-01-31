@@ -13,7 +13,7 @@ public class DatabaseCon {
     private static final String URL = "jdbc:mysql://localhost:3306/timetable";
     private static final String USERNAME = "timetable_user";
     private static final String PASSWORD = "timetable_pass";
-    private Connection db;
+    private final Connection db;
 
     public DatabaseCon() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver"); //Loading SQL Connector Driver
@@ -246,24 +246,10 @@ public class DatabaseCon {
     }
 
     public int getTimeSlotCount() throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM time_info;");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM time_slots WHERE day = \"Monday\";");
         ResultSet resultSet = preparedStatement.executeQuery();
         resultSet.next();
-
-        Time currentTime = resultSet.getTime("college_start_time");
-        int slotCount = 0;
-        while( currentTime.before(resultSet.getTime("college_end_time")) ){
-            if( currentTime.equals(resultSet.getTime("break_start_time")) ){
-                currentTime = resultSet.getTime("break_end_time");
-                continue;
-            }
-
-            slotCount++;
-            //Increment Time by 1 hour
-            currentTime = new Time(currentTime.getTime()+3600000);  //3600000 ms = 1 hr
-        }
-
-        return slotCount;
+        return resultSet.getInt(1);
     }
 
     public int getClassroomCountForCourse(String courseCode) throws Exception{
@@ -297,12 +283,11 @@ public class DatabaseCon {
                 preparedStatement.setString(1,classCourseResultSet.getString("course_code"));
                 ResultSet courseResultSet = preparedStatement.executeQuery();
 
-                while( courseResultSet.next() ){
-                    if( courseResultSet.getInt("session_duration") == 1 ) {
-                        load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week"));
-                    }else{
-                        load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week")) * 4;  //Mutliplied by 4 for 4 batches
-                    }
+                courseResultSet.next();
+                if( courseResultSet.getInt("session_duration") == 1 ) {
+                    load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week"));
+                }else{
+                    load += (courseResultSet.getInt("session_duration") * courseResultSet.getInt("session_per_week")) * 4;  //Mutliplied by 4 for 4 batches
                 }
             }
         }
@@ -473,5 +458,35 @@ public class DatabaseCon {
             preparedStatement.setString(1,courseCodeList.get(i));
             preparedStatement.executeUpdate();
         }
+    }
+
+    public ResultSet getLectureSubjectAllocationForClass(int classId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement(" SELECT subject.course_code,course.course_name,teacher.firstname,teacher.lastname FROM subject JOIN course ON subject.course_code = course.course_code JOIN teacher on subject.teacher_id = teacher.teacher_id WHERE subject.class_id = ? AND course.session_duration=1 ORDER BY course_code;");
+        preparedStatement.setInt(1,classId);
+        return preparedStatement.executeQuery();
+    }
+
+
+    public ResultSet getPracticalSubjectAllocationForClass(int classId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement(" SELECT subject.course_code,course.course_name,batch,teacher.firstname,teacher.lastname FROM subject JOIN course ON subject.course_code = course.course_code JOIN teacher on subject.teacher_id = teacher.teacher_id WHERE subject.class_id = ? AND course.session_duration=2 ORDER BY course_code,batch;");
+        preparedStatement.setInt(1,classId);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getTimeList() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM time_slots WHERE day = \"Monday\" ORDER BY start_time,end_time;");
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getLectureAllocationForTeacher(int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,course.course_name,class.year,class.division FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 1 ORDER BY subject.course_code,class.year,class.division;");
+        preparedStatement.setInt(1,teacherId);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getPracticalAllocationForTeacher(int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,batch,course.course_name,class.year,class.division FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 2 ORDER BY subject.course_code,class.year,class.division;");
+        preparedStatement.setInt(1,teacherId);
+        return preparedStatement.executeQuery();
     }
 }

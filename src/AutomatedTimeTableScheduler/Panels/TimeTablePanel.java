@@ -1,9 +1,9 @@
 package AutomatedTimeTableScheduler.Panels;
 
+import AutomatedTimeTableScheduler.CreatePDF.*;
 import AutomatedTimeTableScheduler.Database.DatabaseCon;
 import AutomatedTimeTableScheduler.Static.Constant;
 import AutomatedTimeTableScheduler.Static.Constraint;
-import AutomatedTimeTableScheduler.Static.CreatePDF;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +16,13 @@ public class TimeTablePanel extends JPanel implements ActionListener {
 
 
     private boolean status;
-    private JLabel timeLabel,classLabel,courseLabel,teacherLabel,classroomLabel,statusLabel;
-    private JButton generateTimeTableButton;
+    private final JLabel timeLabel;
+    private final JLabel classLabel;
+    private final JLabel courseLabel;
+    private final JLabel teacherLabel;
+    private final JLabel classroomLabel;
+    private final JLabel statusLabel;
+    private final JButton generateTimeTableButton;
     private DatabaseCon db;
 
     public  TimeTablePanel(){
@@ -148,35 +153,52 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         if( e.getSource() == generateTimeTableButton ){
             try {
                 statusLabel.setText("Generating Time Table");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
                 revalidate();
                 repaint();
 
                 //Creating TimeTable Directory
                 File file = new File("TimeTable");
                 file.mkdir();
+                //Deleting All Files
+                Constraint.deleteAllFileFromDirectory(file);
 
                 //Creating WorkLoad Sheet
-                CreatePDF.createWorkLoadSheet();
+                Workload.createWorkLoadSheet();
+                System.out.println("Workload Sheet Created");
+
+                //Subject Allocation
+                //Executing Python Program to allocate subjects
+                Process process = Runtime.getRuntime().exec("python Python/SubjectAllocation.py");
+                process.waitFor();
+                System.out.println("Subject Allocated");
+                SubjectAllocation.createSubjectAllocationSheet();
+                System.out.println("Subject Allocation Sheet Created");
 
                 //Creating Master Time Table
-                CreatePDF.createMasterTimeTable();
+                MasterTimeTable.createMasterTimeTable();
+                System.out.println("Master Time Table Created");
 
                 //Creating Class Time Table
                 file = new File("TimeTable/Class");
                 file.mkdir();
-                CreatePDF.createClassTimeTable();
+                ClassTimeTable.createClassTimeTable();
+                System.out.println("Class Time Table Created");
 
                 //Creating Classroom Time Table
                 file = new File("TimeTable/Classroom");
                 file.mkdir();
-                CreatePDF.createClassroomTimeTable();
+                ClassroomTimeTable.createClassroomTimeTable();
+                System.out.println("Classroom Time Table Created");
 
                 //Creating Teacher Time Table
                 file = new File("TimeTable/Teacher");
                 file.mkdir();
-                CreatePDF.createTeacherTimeTable();
+                TeacherTimeTable.createTeacherTimeTable();
+                System.out.println("Teacher Time Table Created");
 
                 statusLabel.setText("Time Table Generated");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
                 revalidate();
                 repaint();
             }catch(Exception excp){
