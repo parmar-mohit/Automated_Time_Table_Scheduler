@@ -27,6 +27,9 @@ public class ClassTimeTable {
             PdfWriter.getInstance(document,new FileOutputStream("TimeTable/Class/"+fileName+".pdf"));
             document.open();
 
+            //Adding Logo
+            AddImage.addLogo(document);
+
             //Writing Class Name
             Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN,25.0f,Font.BOLD, BaseColor.BLACK);
             Phrase titlePhrase = new Phrase(fileName,titleFont);

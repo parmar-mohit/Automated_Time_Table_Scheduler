@@ -16,6 +16,9 @@ public class Workload {
         PdfWriter.getInstance(document,new FileOutputStream("TimeTable/WorkLoad.pdf"));
         document.open();
 
+        //Adding Logo
+        AddImage.addLogo(document);
+
         //Connecting to Database
         DatabaseCon db = new DatabaseCon();
 

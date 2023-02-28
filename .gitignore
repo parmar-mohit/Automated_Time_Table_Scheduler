@@ -13,3 +13,6 @@ TimeTable/*
 Database/.$ER Diagram.drawio.bkp
 Database/.$Relational Model.drawio.bkp
 Database/.$ER Diagram.drawio.dtmp
+
+#Test Scripts
+src/AutomatedTimeTableScheduler/TestScripts/*

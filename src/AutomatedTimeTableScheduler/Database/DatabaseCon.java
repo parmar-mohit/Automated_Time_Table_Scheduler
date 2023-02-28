@@ -479,14 +479,38 @@ public class DatabaseCon {
     }
 
     public ResultSet getLectureAllocationForTeacher(int teacherId) throws Exception{
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,course.course_name,class.year,class.division FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 1 ORDER BY subject.course_code,class.year,class.division;");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,course.course_name,class.year,class.division,course.session_duration,course.session_per_week FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 1 ORDER BY subject.course_code,class.year,class.division;");
         preparedStatement.setInt(1,teacherId);
         return preparedStatement.executeQuery();
     }
 
     public ResultSet getPracticalAllocationForTeacher(int teacherId) throws Exception{
-        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,batch,course.course_name,class.year,class.division FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 2 ORDER BY subject.course_code,class.year,class.division;");
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT subject.course_code,batch,course.course_name,class.year,class.division,course.session_duration,course.session_per_week FROM subject JOIN course ON subject.course_code = course.course_code JOIN class ON subject.class_id = class.class_id WHERE teacher_id = ? AND course.session_duration = 2 ORDER BY subject.course_code,class.year,class.division;");
         preparedStatement.setInt(1,teacherId);
         return preparedStatement.executeQuery();
+    }
+
+    public int getTeacherLectureLoad(int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course.session_duration,course.session_per_week FROM subject JOIN course ON subject.course_code = course.course_code WHERE teacher_id = ? AND course.session_duration = 1;");
+        preparedStatement.setInt(1,teacherId);
+        int load = 0;
+        ResultSet lectureLoadResultSet = preparedStatement.executeQuery();
+        while( lectureLoadResultSet.next() ){
+            load += lectureLoadResultSet.getInt("session_duration") * lectureLoadResultSet.getInt("session_per_week");
+        }
+
+        return load;
+    }
+
+    public int getTeacherPracticalLoad(int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course.session_duration,course.session_per_week FROM subject JOIN course ON subject.course_code = course.course_code WHERE teacher_id = ? AND course.session_duration = 2;");
+        preparedStatement.setInt(1,teacherId);
+        int load = 0;
+        ResultSet practicalLoadResultSet = preparedStatement.executeQuery();
+        while( practicalLoadResultSet.next() ){
+            load += practicalLoadResultSet.getInt("session_duration") * practicalLoadResultSet.getInt("session_per_week");
+        }
+
+        return load;
     }
 }

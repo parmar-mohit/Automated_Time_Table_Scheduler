@@ -25,6 +25,8 @@ public class MasterTimeTable {
             if( i != 0 ){
                 document.newPage();
             }
+            //Adding Logo
+            AddImage.addLogo(document);
 
             //Writing Day of Week in Title
             Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN,25.0f,Font.BOLD, BaseColor.BLACK);

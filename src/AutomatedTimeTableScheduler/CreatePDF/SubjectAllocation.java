@@ -17,6 +17,9 @@ public class SubjectAllocation {
         PdfWriter.getInstance(document,new FileOutputStream("TimeTable/Subject Allocation.pdf"));
         document.open();
 
+        //Adding Logo
+        AddImage.addLogo(document);
+
         //Connecting to Database
         DatabaseCon db = new DatabaseCon();
 

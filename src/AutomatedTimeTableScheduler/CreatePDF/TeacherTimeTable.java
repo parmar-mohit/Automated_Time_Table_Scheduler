@@ -23,10 +23,14 @@ public class TeacherTimeTable {
         while( teacherResultSet.next() ){
             Document document = new Document(PageSize.A4);
 
+
             String fileName = Constraint.getFormattedText(teacherResultSet.getString("firstname"));
             fileName += " " + Constraint.getFormattedText(teacherResultSet.getString("lastname"));
             PdfWriter.getInstance(document,new FileOutputStream("TimeTable/Teacher/"+fileName+".pdf"));
             document.open();
+
+            //Adding logo
+            AddImage.addLogo(document);
 
             //Writing Teacher Name
             Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN,25.0f,Font.BOLD, BaseColor.BLACK);
@@ -37,7 +41,8 @@ public class TeacherTimeTable {
             document.add(new Paragraph("\n\n"));
 
             //Lecture Allocation Table
-            PdfPTable lectureTable = new PdfPTable(new float[]{0.3f,0.4f,0.3f});
+            int totalLoad = 0; // To Store total workload of Teacher per week
+            PdfPTable lectureTable = new PdfPTable(new float[]{0.2f,0.4f,0.2f,0.1f,0.1f});
             lectureTable.setWidthPercentage(100);
             addLectureTableHeader(lectureTable);
             ResultSet lectureResultSet = db.getLectureAllocationForTeacher(teacherResultSet.getInt("teacher_id"));
@@ -50,6 +55,14 @@ public class TeacherTimeTable {
 
                 cell = new PdfPCell(new Phrase(Constraint.getClassString(lectureResultSet.getInt("year"),lectureResultSet.getString("division"))));
                 lectureTable.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(lectureResultSet.getString("session_duration")));
+                lectureTable.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(lectureResultSet.getString("session_per_week")));
+                lectureTable.addCell(cell);
+
+                totalLoad += lectureResultSet.getInt("session_duration") * lectureResultSet.getInt("session_per_week");
             }
             document.add(lectureTable);
 
@@ -58,7 +71,7 @@ public class TeacherTimeTable {
             document.add(seperatorParagraph);
 
             //Practical Allocation Table
-            PdfPTable practicalTable = new PdfPTable(new float[]{0.25f,0.4f,0.1f,0.25f});
+            PdfPTable practicalTable = new PdfPTable(new float[]{0.15f,0.37f,0.15f,0.1f,0.1f,0.1f});
             practicalTable.setWidthPercentage(100);
             addPracticalTableHeader(practicalTable);
             ResultSet practicalResultSet = db.getPracticalAllocationForTeacher(teacherResultSet.getInt("teacher_id"));
@@ -69,16 +82,35 @@ public class TeacherTimeTable {
                 cell = new PdfPCell(new Phrase(practicalResultSet.getString("course_name")));
                 practicalTable.addCell(cell);
 
+                cell = new PdfPCell(new Phrase(Constraint.getClassString(practicalResultSet.getInt("year"),practicalResultSet.getString("division"))));
+                practicalTable.addCell(cell);
+
                 cell = new PdfPCell(new Phrase(practicalResultSet.getInt("batch")+""));
                 practicalTable.addCell(cell);
 
-                cell = new PdfPCell(new Phrase(Constraint.getClassString(practicalResultSet.getInt("year"),practicalResultSet.getString("division"))));
+                cell = new PdfPCell(new Phrase(practicalResultSet.getInt("session_duration")+""));
                 practicalTable.addCell(cell);
+
+                cell = new PdfPCell(new Phrase(practicalResultSet.getInt("session_per_week")+""));
+                practicalTable.addCell(cell);
+
+                totalLoad += practicalResultSet.getInt("session_duration") * practicalResultSet.getInt("session_per_week");
             }
             document.add(practicalTable);
 
-            document.newPage();
+            //Writing Total Workload
+            Font loadFont = new Font(Font.FontFamily.TIMES_ROMAN,18.0f,Font.NORMAL, BaseColor.BLACK);
+            Phrase loadPhrase = new Phrase("Total WorkLoad : "+totalLoad,loadFont);
+            Paragraph loadTitle = new Paragraph(loadPhrase);
+            loadTitle.setAlignment(Element.ALIGN_CENTER);
+            document.add(loadTitle);
+            document.add(new Paragraph("\n\n"));
+
             document.setPageSize(PageSize.A4.rotate());
+            document.newPage();
+
+            //Adding Logo
+            AddImage.addLogo(document);
 
             PdfPTable table = new PdfPTable(db.getTimeSlotCount()+1);
             addTeacherTableHeader(table);
@@ -110,10 +142,10 @@ public class TeacherTimeTable {
         PdfPCell lectureCell = new PdfPCell();
         lectureCell.setBackgroundColor(new BaseColor(66,135,245));
         lectureCell.setPhrase(new Phrase("Lectures",new Font(Font.FontFamily.TIMES_ROMAN,14.0f,Font.NORMAL,BaseColor.BLACK)));
-        lectureCell.setColspan(3);
+        lectureCell.setColspan(5);
         lectureCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(lectureCell);
-        Stream.of("Course Code","Course Name","Class")
+        Stream.of("Course Code","Course Name","Class","Session Duration","Session/Week")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(new BaseColor(66, 135, 245));
@@ -126,10 +158,10 @@ public class TeacherTimeTable {
         PdfPCell practicalCell = new PdfPCell();
         practicalCell.setBackgroundColor(new BaseColor(66,135,245));
         practicalCell.setPhrase(new Phrase("Practicals",new Font(Font.FontFamily.TIMES_ROMAN,14.0f,Font.NORMAL,BaseColor.BLACK)));
-        practicalCell.setColspan(4);
+        practicalCell.setColspan(6);
         practicalCell.setHorizontalAlignment(Element.ALIGN_CENTER);
         table.addCell(practicalCell);
-        Stream.of("Course Code","Course Name","Batch","Class")
+        Stream.of("Course Code","Course Name","Class","Batch","Session Duration","Session/Week")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(new BaseColor(66, 135, 245));
