@@ -1,7 +1,5 @@
 package AutomatedTimeTableScheduler.CustomComponents;
 
-import com.mysql.cj.xdevapi.JsonArray;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -22,7 +20,7 @@ public class CoursePreferenceTable implements MouseListener {
 
     public CoursePreferenceTable() {
         preference = 1;
-        String[] columns = {"Course Code", "Course Name", "Session Duration", "Session/Week","Selection"};
+        String[] columns = {"Course Code", "Course Name", "Session Duration", "Session/Week","Preference"};
         tableModel = new DefaultTableModel(columns, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -99,15 +97,18 @@ public class CoursePreferenceTable implements MouseListener {
     }
 
     public Dictionary<String,Integer> getPrefenceList(){
+        if( preference <= 3 ){
+            return null;
+        }
         Dictionary<String,Integer> preferenceList = new Hashtable<>();
 
         for( int i = 0; i < table.getRowCount(); i++){
+            String courseCode = (String)table.getValueAt(i,0);
             if(table.getValueAt(i,4) == null ){
-                return null;
+                preferenceList.put(courseCode,preference);
+                preference++;
             }else{
                 int value = (int)table.getValueAt(i,4);
-                String courseCode = (String)table.getValueAt(i,0);
-
                 preferenceList.put(courseCode,value);
             }
         }

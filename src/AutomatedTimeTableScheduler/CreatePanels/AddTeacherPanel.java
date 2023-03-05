@@ -15,11 +15,16 @@ import java.util.Dictionary;
 
 public class AddTeacherPanel extends JPanel implements ActionListener, KeyListener {
 
-    private JLabel panelNameLabel,firstnameLabel,lastnameLabel,messageLabel;
-    private JTextField firstnameTextField,lastnameTextField;
+    private final JLabel panelNameLabel;
+    private final JLabel firstnameLabel;
+    private final JLabel lastnameLabel;
+    private final JLabel messageLabel;
+    private final JTextField firstnameTextField;
+    private final JTextField lastnameTextField;
 
-    private CoursePreferenceTable preferenceTable;
-    private JButton addTeacherButton;
+    private final CoursePreferenceTable preferenceTable;
+    private final JButton clearPreferencesButton;
+    private final JButton addTeacherButton;
     private DatabaseCon db;
 
     public AddTeacherPanel(){
@@ -30,6 +35,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         lastnameLabel = new JLabel("Teacher Lastname : ");
         lastnameTextField = new JTextField(20);
         preferenceTable = new CoursePreferenceTable();
+        clearPreferencesButton = new JButton("Clear Preferences");
         messageLabel = new JLabel();
         addTeacherButton = new JButton("Add Teacher");
 
@@ -39,6 +45,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         //Adding Listeners
         firstnameTextField.addKeyListener(this);
         lastnameTextField.addKeyListener(this);
+        clearPreferencesButton.addActionListener(this);
         addTeacherButton.addActionListener(this);
 
         //Filling Table
@@ -55,48 +62,53 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
         add(lastnameLabel,Constraint.setPosition(0,2));
         add(lastnameTextField,Constraint.setPosition(1,2,Constraint.LEFT));
         add(preferenceTable.getScrollPane(),Constraint.setPosition(0,3,2,1));
-        add(messageLabel,Constraint.setPosition(0,4,2,1));
-        add(addTeacherButton,Constraint.setPosition(0,5,2,1));
+        add(clearPreferencesButton,Constraint.setPosition(0,4,2,1));
+        add(messageLabel,Constraint.setPosition(0,5,2,1));
+        add(addTeacherButton,Constraint.setPosition(0,6,2,1));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String firstname = firstnameTextField.getText();
-        if( firstname.equals("") ){
-            messageLabel.setText("Enter Firstname");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
-        firstname = Constraint.getFormattedText(firstname);
+        if( e.getSource() == addTeacherButton) {
+            String firstname = firstnameTextField.getText();
+            if (firstname.equals("")) {
+                messageLabel.setText("Enter Firstname");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+            firstname = Constraint.getFormattedText(firstname);
 
-        String lastname = lastnameTextField.getText();
-        if( lastname.equals("") ){
-            messageLabel.setText("Enter Lastname");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
-        lastname = Constraint.getFormattedText(lastname);
+            String lastname = lastnameTextField.getText();
+            if (lastname.equals("")) {
+                messageLabel.setText("Enter Lastname");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+            lastname = Constraint.getFormattedText(lastname);
 
-        Dictionary<String,Integer> preferenceList = preferenceTable.getPrefenceList();
-        if( preferenceList == null ){
-            messageLabel.setText("Select Preference for All Courses");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
+            Dictionary<String, Integer> preferenceList = preferenceTable.getPrefenceList();
+            if (preferenceList == null) {
+                messageLabel.setText("Select a Minimum of 3 Preferences");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
 
-        try{
-            db = new DatabaseCon();
-            db.addTeacher(firstname,lastname,preferenceList);
+            try {
+                db = new DatabaseCon();
+                db.addTeacher(firstname, lastname, preferenceList);
 
-            messageLabel.setText("Teacher Id Added");
-            Constraint.labelDeleteAfterTime(messageLabel);
+                messageLabel.setText("Teacher Id Added");
+                Constraint.labelDeleteAfterTime(messageLabel);
 
-            //Clearing Input Fields
-            firstnameTextField.setText("");
-            lastnameTextField.setText("");
+                //Clearing Input Fields
+                firstnameTextField.setText("");
+                lastnameTextField.setText("");
+                preferenceTable.resetPreferences();
+            } catch (Exception excp) {
+                excp.printStackTrace();
+            }
+        }else if( e.getSource() == clearPreferencesButton ){
             preferenceTable.resetPreferences();
-        }catch(Exception excp){
-            excp.printStackTrace();
         }
     }
 

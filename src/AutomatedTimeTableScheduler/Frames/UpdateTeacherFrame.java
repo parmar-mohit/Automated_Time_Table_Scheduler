@@ -15,13 +15,18 @@ import java.util.Dictionary;
 
 public class UpdateTeacherFrame extends JFrame implements ActionListener, KeyListener {
 
-    private JLabel panelNameLabel,firstnameLabel,lastnameLabel,messageLabel;
-    private JTextField firstnameTextField,lastnameTextField;
+    private final JLabel panelNameLabel;
+    private final JLabel firstnameLabel;
+    private final JLabel lastnameLabel;
+    private final JLabel messageLabel;
+    private final JTextField firstnameTextField;
+    private final JTextField lastnameTextField;
 
-    private CoursePreferenceTable preferenceTable;
-    private JButton updateTeacherButton;
+    private final CoursePreferenceTable preferenceTable;
+    private final JButton clearPreferencesButton;
+    private final JButton updateTeacherButton;
     private DatabaseCon db;
-    private int teacherId;
+    private final int teacherId;
 
     public UpdateTeacherFrame(String firstname,String lastname,int teacherId){
         this.teacherId = teacherId;
@@ -32,6 +37,7 @@ public class UpdateTeacherFrame extends JFrame implements ActionListener, KeyLis
         lastnameLabel = new JLabel("Teacher Lastname : ");
         lastnameTextField = new JTextField(lastname,20);
         preferenceTable = new CoursePreferenceTable();
+        clearPreferencesButton = new JButton("Clear Preferences");
         messageLabel = new JLabel();
         updateTeacherButton = new JButton("Update Teacher");
 
@@ -41,6 +47,7 @@ public class UpdateTeacherFrame extends JFrame implements ActionListener, KeyLis
         //Adding Listeners
         firstnameTextField.addKeyListener(this);
         lastnameTextField.addKeyListener(this);
+        clearPreferencesButton.addActionListener(this);
         updateTeacherButton.addActionListener(this);
 
         //Filling Table
@@ -62,43 +69,48 @@ public class UpdateTeacherFrame extends JFrame implements ActionListener, KeyLis
         add(lastnameLabel,Constraint.setPosition(0,2));
         add(lastnameTextField,Constraint.setPosition(1,2,Constraint.LEFT));
         add(preferenceTable.getScrollPane(),Constraint.setPosition(0,3,2,1));
-        add(messageLabel,Constraint.setPosition(0,4,2,1));
-        add(updateTeacherButton,Constraint.setPosition(0,5,2,1));
+        add(clearPreferencesButton,Constraint.setPosition(0,4,2,1));
+        add(messageLabel,Constraint.setPosition(0,5,2,1));
+        add(updateTeacherButton,Constraint.setPosition(0,6,2,1));
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String firstname = firstnameTextField.getText();
-        if( firstname.equals("") ){
-            messageLabel.setText("Enter Firstname");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
-        firstname = Constraint.getFormattedText(firstname);
+        if( e.getSource() == updateTeacherButton ) {
+            String firstname = firstnameTextField.getText();
+            if (firstname.equals("")) {
+                messageLabel.setText("Enter Firstname");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+            firstname = Constraint.getFormattedText(firstname);
 
-        String lastname = lastnameTextField.getText();
-        if( lastname.equals("") ){
-            messageLabel.setText("Enter Lastname");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
-        lastname = Constraint.getFormattedText(lastname);
+            String lastname = lastnameTextField.getText();
+            if (lastname.equals("")) {
+                messageLabel.setText("Enter Lastname");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
+            lastname = Constraint.getFormattedText(lastname);
 
-        Dictionary<String,Integer> preferenceList = preferenceTable.getPrefenceList();
-        if( preferenceList == null ){
-            messageLabel.setText("Select Preference for All Courses");
-            Constraint.labelDeleteAfterTime(messageLabel);
-            return;
-        }
+            Dictionary<String, Integer> preferenceList = preferenceTable.getPrefenceList();
+            if (preferenceList == null) {
+                messageLabel.setText("Select a Minimum of 3 Preferences");
+                Constraint.labelDeleteAfterTime(messageLabel);
+                return;
+            }
 
-        try{
-            db = new DatabaseCon();
-            db.updateTeacher(teacherId,firstname,lastname,preferenceList);
+            try {
+                db = new DatabaseCon();
+                db.updateTeacher(teacherId, firstname, lastname, preferenceList);
 
-            messageLabel.setText("Teacher Id Updated");
-            Constraint.labelDeleteAfterTime(messageLabel);
-        }catch(Exception excp){
-            excp.printStackTrace();
+                messageLabel.setText("Teacher Id Updated");
+                Constraint.labelDeleteAfterTime(messageLabel);
+            } catch (Exception excp) {
+                excp.printStackTrace();
+            }
+        }else if( e.getSource() == clearPreferencesButton ){
+            preferenceTable.resetPreferences();
         }
     }
 

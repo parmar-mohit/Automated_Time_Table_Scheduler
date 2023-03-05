@@ -15,12 +15,15 @@ import java.awt.event.WindowListener;
 
 public class TeacherCardPanel extends JPanel implements ActionListener  {
 
-    private JLabel firstnameLabel,lastnameLabel;
-    private JButton updateTeacherButton,deleteTeacherButton;
+    private final JLabel firstnameLabel;
+    private final JLabel lastnameLabel;
+    private final JButton updateTeacherButton;
+    private final JButton deleteTeacherButton;
     private DatabaseCon db;
-    private TeacherPanel parentPanel;
-    private int teacherId;
-    private String firstname,lastname;
+    private final TeacherPanel parentPanel;
+    private final int teacherId;
+    private final String firstname;
+    private final String lastname;
 
     public TeacherCardPanel(String firstname,String lastname,int teacherId,TeacherPanel parent){
         this.firstname = firstname;
@@ -95,7 +98,7 @@ public class TeacherCardPanel extends JPanel implements ActionListener  {
                 }
             });
         }else if( e.getSource() == deleteTeacherButton ){
-            int result = JOptionPane.showConfirmDialog(getTopLevelAncestor(),"Are you sure you want to delete course?");
+            int result = JOptionPane.showConfirmDialog(getTopLevelAncestor(),"Are you sure you want to delete Teacher?");
 
             if( result == JOptionPane.YES_NO_OPTION ){
                 try{
