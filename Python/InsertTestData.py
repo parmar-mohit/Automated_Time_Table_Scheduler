@@ -34,11 +34,12 @@ db.executeUpdateQuery(query)
 
 df = pd.read_excel("Test Data.xlsx",sheet_name="CourseData")
 for index in df.index:
-    query = "INSERT INTO course VALUES(\"{}\",\"{}\",{},{})".format(
+    query = "INSERT INTO course VALUES(\"{}\",\"{}\",{},{},\"{}\")".format(
         df["Course Code"][index],
         df["Course Name"][index],
         df["Session / Week"][index],
-        df["Session Duration"][index]
+        df["Session Duration"][index],
+        df["c_abbreviation"][index]
     )
     db.executeUpdateQuery(query)
 
@@ -79,10 +80,11 @@ db.executeUpdateQuery(query)
 
 df = pd.read_excel("Test Data.xlsx",sheet_name="TeacherData")
 for index in df.index:
-    query = "INSERT INTO teacher VALUES({},\"{}\",\"{}\");".format(
+    query = "INSERT INTO teacher VALUES({},\"{}\",\"{}\",\"{}\");".format(
         df["Teacher Id"][index],
         df["Firstname"][index],
-        df["Lastname"][index]
+        df["Lastname"][index],
+        df["t_abbreviation"][index]
     )
     db.executeUpdateQuery(query)
 
@@ -114,6 +116,7 @@ for index in df.index:
         df["Room Name"][index]
     )
     db.executeUpdateQuery(query)
+db.executeUpdateQuery("INSERT INTO room VALUES(17,"");")
 
 print("Classroom Data Inserted")
 

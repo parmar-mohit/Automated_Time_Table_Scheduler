@@ -138,12 +138,13 @@ public class DatabaseCon {
         return resultSet.getBoolean(1);
     }
 
-    public void addCourse(String courseCode,String courseName,int sessionDuration,int sessionPerWeek) throws Exception {
-        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO course VALUES(?,?,?,?);");
+    public void addCourse(String courseCode,String courseName,int sessionDuration,int sessionPerWeek,String abbreviation) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO course VALUES(?,?,?,?,?);");
         preparedStatement.setString(1,courseCode);
         preparedStatement.setString(2,courseName);
         preparedStatement.setInt(3,sessionPerWeek);
         preparedStatement.setInt(4,sessionDuration);
+        preparedStatement.setString(5,abbreviation);
         preparedStatement.executeUpdate();
     }
 
@@ -158,11 +159,12 @@ public class DatabaseCon {
         preparedStatement.executeUpdate();
     }
 
-    public void addTeacher(String firstname, String lastname, Dictionary<String,Integer> preferenceList) throws Exception {
+    public void addTeacher(String firstname, String lastname,String abbreviation, Dictionary<String,Integer> preferenceList) throws Exception {
         //Inserting Teacher Details
-        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO teacher(firstname,lastname) VALUES(?,?);");
+        PreparedStatement preparedStatement = db.prepareStatement("INSERT INTO teacher(firstname,lastname,t_abbreviation) VALUES(?,?,?);");
         preparedStatement.setString(1,firstname);
         preparedStatement.setString(2,lastname);
+        preparedStatement.setString(3,abbreviation);
         preparedStatement.executeUpdate();
 
         //Getting Teacher Id
@@ -512,5 +514,63 @@ public class DatabaseCon {
         }
 
         return load;
+    }
+
+    public ResultSet getTimeSlotsForDay(String day) throws Exception {
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT * FROM time_slots WHERE day = ?;");
+        preparedStatement.setString(1,day);
+        return preparedStatement.executeQuery();
+    }
+
+    public boolean checkAbbreviationInCourse(String abbreviation) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM course WHERE c_abbreviation=?);");
+        preparedStatement.setString(1,abbreviation);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
+
+    public boolean checkAbbreviationInTeacher(String abbreviation) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT EXISTS(SELECT * FROM teacher WHERE t_abbreviation=?);");
+        preparedStatement.setString(1,abbreviation);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getBoolean(1);
+    }
+
+    public ResultSet getEntryForTimeClass(int timeId,int classId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course.c_abbreviation,teacher.t_abbreviation,batch,room.room_name FROM time_table JOIN subject ON time_table.subject_id = subject.subject_id JOIN course ON subject.course_code = course.course_code JOIN teacher ON subject.teacher_id = teacher.teacher_id JOIN room ON time_table.room_id = room.room_id WHERE time_id = ? AND class_id = ? ORDER BY batch;");
+        preparedStatement.setInt(1,timeId);
+        preparedStatement.setInt(2,classId);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getEntryForTimeRoom(int timeId,int roomId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course.c_abbreviation,teacher.t_abbreviation,batch,class.year,class.division FROM time_table JOIN subject ON time_table.subject_id = subject.subject_id JOIN course ON subject.course_code = course.course_code JOIN teacher ON subject.teacher_id = teacher.teacher_id JOIN class ON subject.class_id = class.class_id WHERE time_id = ? AND room_id = ?;");
+        preparedStatement.setInt(1,timeId);
+        preparedStatement.setInt(2,roomId);
+        return preparedStatement.executeQuery();
+    }
+
+    public ResultSet getEntryForTimeTeacher(int timeId,int teacherId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT course.c_abbreviation,room_name,batch,class.year,class.division FROM time_table JOIN subject ON time_table.subject_id = subject.subject_id JOIN course ON subject.course_code = course.course_code JOIN room ON time_table.room_id = room.room_id JOIN class ON subject.class_id = class.class_id WHERE time_id = ? AND teacher_id = ?;");
+        preparedStatement.setInt(1,timeId);
+        preparedStatement.setInt(2,teacherId);
+        return preparedStatement.executeQuery();
+    }
+
+    public int getTotalWorkingHours() throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM time_slots;");
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
+    }
+
+    public int getRoomWorkingHours(int roomId) throws Exception{
+        PreparedStatement preparedStatement = db.prepareStatement("SELECT COUNT(*) FROM time_table WHERE room_id = ?;");
+        preparedStatement.setInt(1,roomId);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        resultSet.next();
+        return resultSet.getInt(1);
     }
 }

@@ -24,10 +24,10 @@ public class Report {
         DatabaseCon db = new DatabaseCon();
 
         //Adding Logo
-        AddImage.addLogo(document);
+        AddResources.addLogo(document);
 
         //Teacher Allocation Report
-        Phrase teacherReportPhrase = new Phrase("Teacher Allocation Report",new Font(Font.FontFamily.TIMES_ROMAN,16.0f,Font.BOLD,BaseColor.BLACK));
+        Phrase teacherReportPhrase = new Phrase("Teacher Workload Allocation Report",new Font(Font.FontFamily.TIMES_ROMAN,16.0f,Font.BOLD,BaseColor.BLACK));
         Paragraph teacherReportParagraph = new Paragraph(teacherReportPhrase);
         teacherReportParagraph.setAlignment(Element.ALIGN_CENTER);
         document.add(teacherReportParagraph);
@@ -70,6 +70,57 @@ public class Report {
         //Adding Table
         document.add(table);
 
+        //Adding Room Utilisation Report
+        document.newPage();
+
+        //Adding Logo
+        AddResources.addLogo(document);
+
+        //Teacher Allocation Report
+        Phrase roomReportPhrase = new Phrase("Class Utilisation Report",new Font(Font.FontFamily.TIMES_ROMAN,16.0f,Font.BOLD,BaseColor.BLACK));
+        Paragraph roomReportParagraph = new Paragraph(roomReportPhrase);
+        roomReportParagraph.setAlignment(Element.ALIGN_CENTER);
+        document.add(roomReportParagraph);
+        document.add(new Paragraph("\n\n"));
+
+        int totalWorkingHours = db.getTotalWorkingHours();
+        Phrase workingHours = new Phrase("Total Working Hours/Week : "+totalWorkingHours);
+        document.add(workingHours);
+        document.add(new Paragraph("\n\n"));
+
+        PdfPTable classTable = new PdfPTable(new float[]{0.6f,0.2f,0.2f});
+        addRoomUtilisationTableHeader(classTable);
+
+        ResultSet roomResultSet = db.getClassroomList();
+        float utilisationSum = 0;
+        while( roomResultSet.next() ){
+            cell.setPhrase(new Phrase(roomResultSet.getString("room_name")));
+            classTable.addCell(cell);
+
+            int roomWorkingHours = db.getRoomWorkingHours(roomResultSet.getInt("room_id"));
+            cell.setPhrase(new Phrase(roomWorkingHours+""));
+            classTable.addCell(cell);
+
+            float utilisation = BigDecimal.valueOf((float)roomWorkingHours/totalWorkingHours*100)
+                    .setScale(2, RoundingMode.HALF_UP)
+                    .floatValue();
+            cell.setPhrase(new Phrase(utilisation + "%"));
+            classTable.addCell(cell);
+
+            utilisationSum += utilisation;
+        }
+        cell = new PdfPCell(new Phrase("Average Utilisation",new Font(Font.FontFamily.TIMES_ROMAN,15.0f,Font.BOLD,BaseColor.BLACK)));
+        cell.setColspan(2);
+        classTable.addCell(cell);
+
+        float averageUtilisation = BigDecimal.valueOf(utilisationSum/db.getClassroomCount())
+                .setScale(2, RoundingMode.HALF_UP)
+                .floatValue();
+        cell = new PdfPCell(new Phrase(averageUtilisation+"%"));
+        classTable.addCell(cell);
+
+        //Adding Table to Document
+        document.add(classTable);
 
         //Closing Connection With Database
         db.closeConnection();
@@ -78,8 +129,18 @@ public class Report {
         document.close();
     }
 
-    private static void addTeacherAllocationTableHeader(PdfPTable table) throws Exception{
+    private static void addTeacherAllocationTableHeader(PdfPTable table){
         Stream.of("Teacher Name","Lecture Load","Practical Load","Total Load")
+                .forEach(columnTitle -> {
+                    PdfPCell header = new PdfPCell();
+                    header.setBackgroundColor(new BaseColor(66, 135, 245));
+                    header.setPhrase(new Phrase(columnTitle,new Font(Font.FontFamily.TIMES_ROMAN,14.0f,Font.NORMAL,BaseColor.BLACK)));
+                    table.addCell(header);
+                });
+    }
+
+    private static void addRoomUtilisationTableHeader(PdfPTable table){
+        Stream.of("Room Name","Working Hours","Utilisation")
                 .forEach(columnTitle -> {
                     PdfPCell header = new PdfPCell();
                     header.setBackgroundColor(new BaseColor(66, 135, 245));

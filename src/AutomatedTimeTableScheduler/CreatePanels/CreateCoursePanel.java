@@ -8,16 +8,20 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.security.Key;
 
 public class CreateCoursePanel extends JPanel implements ActionListener {
 
-    private JLabel panelNameLabel,courseCodeLabel,courseNameLabel,sessionDurationLabel,sessionPerWeekLabel,messageLabel;
-    private JTextField courseCodeTextField,courseNameTextField;
-    private JComboBox sessionDurationComboBox,sessionPerWeekComboBox;
-    private JButton addCourseButton;
+    private final JLabel panelNameLabel;
+    private final JLabel courseCodeLabel;
+    private final JLabel courseNameLabel;
+    private final JLabel sessionDurationLabel;
+    private final JLabel sessionPerWeekLabel;
+    private final JLabel messageLabel;
+    private final JTextField courseCodeTextField;
+    private final JTextField courseNameTextField;
+    private final JComboBox sessionDurationComboBox;
+    private final JComboBox sessionPerWeekComboBox;
+    private final JButton addCourseButton;
     private DatabaseCon db;
     public CreateCoursePanel(){
         //Initialising Member Variables
@@ -77,6 +81,7 @@ public class CreateCoursePanel extends JPanel implements ActionListener {
 
         int sessionDuration = (int)sessionDurationComboBox.getSelectedItem();
         int sessionPerWeek = Integer.parseInt(sessionPerWeekComboBox.getSelectedItem()+"");
+        String abbreviation = Constraint.generateAbbreviation(courseName,"course");
 
         try{
             db = new DatabaseCon();
@@ -87,7 +92,7 @@ public class CreateCoursePanel extends JPanel implements ActionListener {
                 return;
             }
 
-            db.addCourse(courseCode,courseName,sessionDuration,sessionPerWeek);
+            db.addCourse(courseCode,courseName,sessionDuration,sessionPerWeek,abbreviation);
             messageLabel.setText("Course Added");
             Constraint.labelDeleteAfterTime(messageLabel);
 

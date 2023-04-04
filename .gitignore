@@ -16,3 +16,8 @@ Database/.$ER Diagram.drawio.dtmp
 
 #Test Scripts
 src/AutomatedTimeTableScheduler/TestScripts/*
+Python/TestScripts/*
+Python/Python.iml
+
+#Genetic Instance
+Python/Genetic Instance.pkl

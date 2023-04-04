@@ -10,7 +10,10 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import java.io.FileOutputStream;
 import java.sql.ResultSet;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
+
+import static java.sql.Types.NULL;
 
 public class MasterTimeTable {
     public static void createMasterTimeTable() throws Exception {
@@ -26,7 +29,7 @@ public class MasterTimeTable {
                 document.newPage();
             }
             //Adding Logo
-            AddImage.addLogo(document);
+            AddResources.addLogo(document);
 
             //Writing Day of Week in Title
             Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN,25.0f,Font.BOLD, BaseColor.BLACK);
@@ -36,10 +39,11 @@ public class MasterTimeTable {
             document.add(title);
             document.add(new Paragraph("\n\n"));
 
-            PdfPTable table = new PdfPTable(db.getTimeSlotCount()+1);
+            PdfPTable table = new PdfPTable(db.getTimeSlotCount()+2);
             addMasterTableHeader(table);  //adding header to tables
 
             ResultSet classResultSet = db.getClassList();
+            boolean breakCellAdded = false;
             while( classResultSet.next() ){
                 int year = classResultSet.getInt("year");
                 String division = classResultSet.getString("division");
@@ -48,20 +52,67 @@ public class MasterTimeTable {
 
                 PdfPCell cell = new PdfPCell();
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 
                 cell.setPhrase(new Paragraph(className));
                 table.addCell(cell);
 
                 //Adding Cells for TimeSlots
-                for( int j = 0; j < db.getTimeSlotCount(); j++ ){
-                    cell.setPhrase(new Phrase("Course\nTeacher\nClassroom"));
-                    table.addCell(cell);
+                ResultSet timeSlotResultSet = db.getTimeSlotsForDay(Constant.WEEK[i]);
+                timeSlotResultSet.next();
+                int previousTimeSlot = timeSlotResultSet.getInt("time_id")-1;
+                timeSlotResultSet = db.getTimeSlotsForDay(Constant.WEEK[i]);
+                while (timeSlotResultSet.next()){
+                    if( !breakCellAdded && previousTimeSlot + 1 != timeSlotResultSet.getInt("time_id")){
+                        cell.setPhrase(new Phrase("Break"));
+                        cell.setRowspan(db.getClassCount());
+                        cell.setColspan(1);
+                        table.addCell(cell);
+                        breakCellAdded = true;
+                        cell.setRowspan(1);
+                    }
+                    previousTimeSlot = timeSlotResultSet.getInt("time_id");
+                    ResultSet timeTable = db.getEntryForTimeClass(timeSlotResultSet.getInt("time_id"),classResultSet.getInt("class_id"));
+                    if( timeTable.next() ){
+                        if ( timeTable.getInt("batch") == NULL ){
+                            String entry = "";
+
+                            entry += timeTable.getString("c_abbreviation") + "\n";
+                            entry += timeTable.getString("t_abbreviation") + "\n";
+                            entry += timeTable.getString("room_name");
+
+                            cell.setPhrase(new Phrase(entry));
+                            cell.setColspan(1);
+                            table.addCell(cell);
+                        }else{
+                            String entry = "";
+                            do{
+                                entry += timeTable.getString("c_abbreviation") + " - ";
+                                entry += timeTable.getString("t_abbreviation") + " - ";
+                                entry += timeTable.getString("room_name")+ " - #";
+                                entry += timeTable.getInt("batch")+"\n";
+                            }while( timeTable.next() );
+                            cell.setPhrase(new Phrase(entry));
+                            cell.setColspan(2);
+                            table.addCell(cell);
+                            timeSlotResultSet.next();
+                            previousTimeSlot = timeSlotResultSet.getInt("time_id");
+                        }
+                    }else{
+                        cell.setPhrase(new Phrase("-----"));
+                        cell.setColspan(1);
+                        table.addCell(cell);
+                    }
                 }
             }
 
             //Adding Table to Document
             document.add(table);
         }
+
+        //Adding abbreviation Pages
+        AddResources.addCourseAbbreviationPage(document);
+        AddResources.addTeacherAbbreviationPage(document);
 
         //Closing Connection With Database
         db.closeConnection();
@@ -81,11 +132,17 @@ public class MasterTimeTable {
 
         SimpleDateFormat sdfTime = new SimpleDateFormat("HH:mm");
         ResultSet timeResultSet = db.getTimeList();
+        Time previousEndTime = null;
         while(timeResultSet.next()){
-            String timeSlot = sdfTime.format(timeResultSet.getTime("start_time")) + "-" + sdfTime.format(timeResultSet.getTime("end_time"));
-            header = new PdfPCell();
-            header.setHorizontalAlignment(Element.ALIGN_CENTER);
-            header.setBackgroundColor(new BaseColor(66, 135, 245));
+            String timeSlot = "";
+            if( previousEndTime != null && !sdfTime.format(previousEndTime).equals(sdfTime.format(timeResultSet.getTime("start_time"))) ){
+                timeSlot = sdfTime.format(previousEndTime) + "-" + sdfTime.format(timeResultSet.getTime("start_time"));
+                header.setPhrase(new Phrase(timeSlot));
+                table.addCell(header);
+            }
+            timeSlot = sdfTime.format(timeResultSet.getTime("start_time")) + "-" + sdfTime.format(timeResultSet.getTime("end_time"));
+            previousEndTime = timeResultSet.getTime("end_time");
+
             header.setPhrase(new Phrase(timeSlot));
             table.addCell(header);
         }

@@ -32,7 +32,8 @@ public class TimeTablePanel extends JPanel implements ActionListener {
         courseLabel = new JLabel();
         teacherLabel = new JLabel();
         classroomLabel = new JLabel();
-        statusLabel = new JLabel();
+        statusLabel = new JLabel("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        statusLabel.setText("");
         generateTimeTableButton = new JButton("Generate Time Table");
 
         //Checking Status if Time Table can be built
@@ -164,34 +165,73 @@ public class TimeTablePanel extends JPanel implements ActionListener {
                 Constraint.deleteAllFileFromDirectory(file);
 
                 //Creating WorkLoad Sheet
+                statusLabel.setText("Creating Workload Sheet");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 Workload.createWorkLoadSheet();
                 System.out.println("Workload Sheet Created");
 
                 //Subject Allocation
                 //Executing Python Program to allocate subjects
+                statusLabel.setText("Allocating Courses to Professor");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 Process process = Runtime.getRuntime().exec("python Python/SubjectAllocation.py");
                 process.waitFor();
-                System.out.println("Subject Allocated");
+                statusLabel.setText("Generating Subject Allocation Sheet");
                 SubjectAllocation.createSubjectAllocationSheet();
-                System.out.println("Subject Allocation Sheet Created");
+
+                //Allocating Practicals
+                statusLabel.setText("Allocating Practical");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
+                process = Runtime.getRuntime().exec("python Python/GeneticAlgorithm.py");
+                process.waitFor();
+
+                //Allocating Lecutes
+                statusLabel.setText("Allocating Lectures");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
+                process = Runtime.getRuntime().exec("python Python/AllocateLectures.py");
+                process.waitFor();
 
                 //Creating Master Time Table
+                statusLabel.setText("Generating Master Time Table");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 MasterTimeTable.createMasterTimeTable();
                 System.out.println("Master Time Table Created");
 
                 //Creating Class Time Table
+                statusLabel.setText("Generating Class Time Table");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 file = new File("TimeTable/Class");
                 file.mkdir();
                 ClassTimeTable.createClassTimeTable();
                 System.out.println("Class Time Table Created");
 
                 //Creating Classroom Time Table
+                statusLabel.setText("Generating Classroom Time Table");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 file = new File("TimeTable/Classroom");
                 file.mkdir();
                 ClassroomTimeTable.createClassroomTimeTable();
                 System.out.println("Classroom Time Table Created");
 
                 //Creating Teacher Time Table
+                statusLabel.setText("Generating Classroom Time Table");
+                statusLabel.paintImmediately(statusLabel.getVisibleRect());
+                revalidate();
+                repaint();
                 file = new File("TimeTable/Teacher");
                 file.mkdir();
                 TeacherTimeTable.createTeacherTimeTable();

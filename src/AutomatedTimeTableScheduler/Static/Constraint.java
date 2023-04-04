@@ -1,5 +1,7 @@
 package AutomatedTimeTableScheduler.Static;
 
+import AutomatedTimeTableScheduler.Database.DatabaseCon;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -87,6 +89,65 @@ public class Constraint {
         for (File file: dir.listFiles()) {
             file.delete();
         }
+    }
+
+    public static String generateAbbreviation(String text,String table){
+        String[] words = text.split(" ");
+        String[] abbreviationArray = new String[3];
+        String abbreviation = "";
+
+        for( int i = 0; i < words.length; i++){
+            abbreviation += Character.toUpperCase(words[i].charAt(0));
+        }
+        if( abbreviation.length() > 5) {
+            abbreviationArray[0] = abbreviation.substring(0, 5).toUpperCase();
+        }else{
+            abbreviationArray[0] = abbreviation.toUpperCase();
+        }
+
+        for( int i = 0; i < words.length; i++)
+        {
+            abbreviation += Character.toUpperCase(words[i].charAt(0));
+            abbreviation += Character.toUpperCase(words[i].charAt(words[i].length()-1));
+        }
+        if( abbreviation.length() > 5) {
+            abbreviationArray[1] = abbreviation.substring(0, 5).toUpperCase();
+        }else{
+            abbreviationArray[1] = abbreviation.toUpperCase();
+        }
+
+        for( int i = 0; i < words.length; i++)
+        {
+            abbreviation += Character.toUpperCase(words[i].charAt(0));
+            abbreviation += Character.toUpperCase(words[i].charAt((words[i].length()-1)/2));
+        }
+        if( abbreviation.length() > 5) {
+            abbreviationArray[2] = abbreviation.substring(0, 5).toUpperCase();
+        }else{
+            abbreviationArray[2] = abbreviation.toUpperCase();
+        }
+
+        try{
+            DatabaseCon db = new DatabaseCon();
+
+            if( table.equals("course") ){
+                for( int i = 0; i < 3; i++ ){
+                    if( !db.checkAbbreviationInCourse(abbreviationArray[i]) ){
+                        return abbreviationArray[i];
+                    }
+                }
+            }else if(table.equals("teacher") ){
+                for( int i = 0; i < 3; i++ ){
+                    if( !db.checkAbbreviationInTeacher(abbreviationArray[i]) ){
+                        return abbreviationArray[i];
+                    }
+                }
+            }
+        }catch(Exception excp){
+            excp.printStackTrace();
+        }
+
+        return "xyz";
     }
 }
 

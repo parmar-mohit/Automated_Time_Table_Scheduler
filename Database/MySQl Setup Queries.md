@@ -28,7 +28,8 @@ CREATE TABLE course (
         course_code VARCHAR(10) PRIMARY KEY,
         course_name VARCHAR(50),
         session_per_week INT,
-        session_duration INT
+        session_duration INT,
+        c_abbreviation VARCHAR(5)
 );
 
 CREATE TABLE room(
@@ -39,7 +40,8 @@ CREATE TABLE room(
 CREATE TABLE teacher(
         teacher_id INT PRIMARY KEY AUTO_INCREMENT,
         firstname VARCHAR(50),
-        lastname VARCHAR(50)
+        lastname VARCHAR(50),
+        t_abbreviation VARCHAR(5)
 );
 
 CREATE TABLE time_info(

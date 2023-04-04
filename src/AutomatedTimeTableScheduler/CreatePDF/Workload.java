@@ -17,7 +17,7 @@ public class Workload {
         document.open();
 
         //Adding Logo
-        AddImage.addLogo(document);
+        AddResources.addLogo(document);
 
         //Connecting to Database
         DatabaseCon db = new DatabaseCon();

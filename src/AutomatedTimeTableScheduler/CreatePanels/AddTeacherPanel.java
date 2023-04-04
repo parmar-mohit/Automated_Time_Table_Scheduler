@@ -85,6 +85,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
                 return;
             }
             lastname = Constraint.getFormattedText(lastname);
+            String abbreviation = Constraint.generateAbbreviation(firstname+" "+lastname,"teacher");
 
             Dictionary<String, Integer> preferenceList = preferenceTable.getPrefenceList();
             if (preferenceList == null) {
@@ -95,7 +96,7 @@ public class AddTeacherPanel extends JPanel implements ActionListener, KeyListen
 
             try {
                 db = new DatabaseCon();
-                db.addTeacher(firstname, lastname, preferenceList);
+                db.addTeacher(firstname, lastname,abbreviation, preferenceList);
 
                 messageLabel.setText("Teacher Id Added");
                 Constraint.labelDeleteAfterTime(messageLabel);
