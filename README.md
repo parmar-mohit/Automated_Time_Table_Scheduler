@@ -58,3 +58,13 @@ Chromosomes](./Research%20Papers/Dynamic%20chromosome2021.pdf)
 Timetabling Using the Iterated Local Search Hyper Heuristic Algorithm](./Research%20Papers/HyperHeuristic%20Algorithm.pdf)
 * [Timetable Model for Individualization of Education 
 Based on Multi-agent Approach](./Research%20Papers/Multi-agent%20Approach.pdf)
+
+### Interface
+
+![](Images/automated-time-table-scheduler-image1.png)
+![](Images/automated-time-table-scheduler-image2.png)
+![](Images/automated-time-table-scheduler-image3.png)
+
+### Generated Time Table Example
+![](Images/automated-time-table-scheduler-image4.png)
+![](Images/automated-time-table-scheduler-image5.png)
